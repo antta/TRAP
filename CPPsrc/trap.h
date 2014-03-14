@@ -11,8 +11,6 @@
 #include <zypp/base/Algorithm.h>
 #include <zypp/PoolQuery.h>
 
-std::string getPackagesFromName(std::string name, std::string repo = "", std::string pathName = "/");
-
 class QueryResult
 {
 public:
@@ -20,8 +18,36 @@ public:
 	~QueryResult();
 
 	bool operator()( const zypp::PoolItem & pi );
-	std::string getResultString();
+};
+
+class Trap
+{
+public:
+
+	static Trap &getInstance()
+	{
+		static Trap s_instance;
+		return s_instance;
+	}
+
+
+	std::string getPackagesFromName(std::string name = "", std::string repo = "");
+	std::string lastQueryResult();
+	void setBuildResult(std::string buildString = "");
+	void addBuildResult(std::string addString);
+	void saveQueryResult();
+	void setPathName(std::string pathName = "/");
 
 private:
-	std::stringstream *m_resultStream;
+
+	QueryResult m_result;
+	std::string m_pathName;
+	
+	std::string m_buildString;//used to overwrite the result string only when the querry is finished.
+	std::string m_resultString;
+
+	Trap();
+	~Trap();
+	Trap(Trap const&);              // Don't Implement.
+        void operator=(Trap const&); // Don't implement
 };
