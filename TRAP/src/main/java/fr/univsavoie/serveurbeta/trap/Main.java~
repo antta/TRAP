@@ -1,3 +1,4 @@
+package fr.univsavoie.serveurbeta.trap
 class Main 
 {
   public static void main(String[] args) 

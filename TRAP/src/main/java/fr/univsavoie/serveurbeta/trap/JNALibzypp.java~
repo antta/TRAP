@@ -1,0 +1,12 @@
+package fr.univsavoie.serveurbeta.trap;
+
+import com.sun.jna.Library; 
+
+/**
+ * Hello world!
+ *
+ */
+public class JNALibzypp 
+{
+    
+}

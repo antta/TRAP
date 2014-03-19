@@ -1,3 +1,5 @@
+package fr.univsavoie.serveurbeta.trap
+
 import java.util.ArrayList;
 
 class JZypp
