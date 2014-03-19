@@ -57,7 +57,7 @@ std::string Trap::lastQueryResult()
 {
 	return m_resultString;
 }
-Trap
+
 void Trap::setPathName(std::string pathName)
 {
 	if(m_pathName != pathName)
