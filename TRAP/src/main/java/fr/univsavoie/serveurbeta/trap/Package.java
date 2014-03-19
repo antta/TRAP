@@ -1,4 +1,4 @@
-package fr.univsavoie.serveurbeta.trap
+package fr.univsavoie.serveurbeta.trap;
 
 /**
  * Class Package
