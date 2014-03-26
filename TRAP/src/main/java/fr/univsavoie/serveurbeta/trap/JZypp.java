@@ -6,11 +6,11 @@ class JZypp{
 
     public JZypp(){
 
+        File lib = new File("TRAP/resources/libZyppImpl.so"); //local developpement
 
-        File lib = new File("TRAP-1.0-SNAPSHOT.jar"+"/libZyppImpl.so"); //For jar
         System.out.println(lib);
         if(!lib.exists())
-            lib = new File("TRAP/resources/libZyppImpl.so"); //local developpement
+            lib = new File("TRAP-1.0-SNAPSHOT.jar"+"/libZyppImpl.so"); //For jar
         //Convert the relative path to absolute
         System.load((lib.getAbsolutePath()));
 
