@@ -6,13 +6,14 @@ class JZypp{
 
     public JZypp(){
 
+        File f = new File(System.getProperty("java.class.path"));
+        File dir = f.getAbsoluteFile().getParentFile();
 
-        File lib = new File("libZyppImpl.so"); //For jar
+        File lib = new File(dir.toString()+"/libZyppImpl.so"); //For jar
         if(!lib.exists())
             lib = new File("TRAP/resources/libZyppImpl.so"); //local developpement
         //Convert the relative path to absolute
         System.load((lib.getAbsolutePath()));
-
 
     }
 
