@@ -8,8 +8,9 @@ class JZypp{
 
         File f = new File(System.getProperty("java.class.path"));
         File dir = f.getAbsoluteFile().getParentFile();
-
+        System.out.println("yolo"+dir.getAbsolutePath());
         File lib = new File(dir.toString()+"/libZyppImpl.so"); //For jar
+        System.out.println("truc : "+lib);
         if(!lib.exists())
             lib = new File("TRAP/resources/libZyppImpl.so"); //local developpement
         //Convert the relative path to absolute
