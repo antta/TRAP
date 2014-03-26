@@ -84,7 +84,8 @@ void Trap::saveQueryResult()
 
 void Trap::addRepo(std::string repoAlias, std::string repoURL)// not working
 {
-	m_repoManager-> addService(repoAlias, repoURL);
+	//m_repoManager->addRepository (const RepoInfo &info)
+	//addService(repoAlias, repoURL);
 }
 
 bool Trap::checkRepo(std::string repoURL)
