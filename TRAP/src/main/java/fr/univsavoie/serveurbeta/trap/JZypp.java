@@ -6,10 +6,10 @@ class JZypp{
 
     public JZypp(){
 
-        File lib = new File("./TRAP/resources/libZyppImpl.so");
-
+        File lib = new File("/libZyppImpl.so");
         //Convert the relative path to absolute
         System.load((lib.getAbsolutePath()));
+
     }
 
     /**
@@ -25,7 +25,8 @@ class JZypp{
      * @param packageName
      * @return
      */
-  native String SearchPackage(String packageName);
+  native String searchPackage(String packageName);
+
   /*static
   {
       System.out.println(ClassLoader.getResource("libZyppImpl.so"));

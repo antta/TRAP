@@ -20,7 +20,7 @@ JNIEXPORT jboolean JNICALL Java_fr_univsavoie_serveurbeta_trap_JZypp_isAValidRep
  * Method:    SearchPackage
  * Signature: (Ljava/lang/String;)Ljava/lang/String;
  */
-JNIEXPORT jstring JNICALL Java_fr_univsavoie_serveurbeta_trap_JZypp_SearchPackage
+JNIEXPORT jstring JNICALL Java_fr_univsavoie_serveurbeta_trap_JZypp_searchPackage
   (JNIEnv *, jobject, jstring);
 
 #ifdef __cplusplus
