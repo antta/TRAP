@@ -1,11 +1,15 @@
 package fr.univsavoie.serveurbeta.trap;
 
-import java.util.ArrayList;
+import java.io.File;
 
 class JZypp{
 
     public JZypp(){
 
+        File lib = new File("./TRAP/resources/libZyppImpl.so");
+
+        //Convert the relative path to absolute
+        System.load((lib.getAbsolutePath()));
     }
 
     /**
@@ -22,10 +26,11 @@ class JZypp{
      * @return
      */
   native String SearchPackage(String packageName);
-  static
+  /*static
   {
+      System.out.println(ClassLoader.getResource("libZyppImpl.so"));
     System.load("/home/patrick-edouard/IdeaProjects/TRAP/TRAP/lib/libZyppImpl.so");
-  }
+  }*/
 
 }
 

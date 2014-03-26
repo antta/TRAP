@@ -9,8 +9,8 @@ class Main
     Trap trap = Trap.getInstance();
     String packageName = "kiwi";
     
-    //ArrayList<Package> listPackage = trap.searchPackage(packageName);
-	//System.out.println("[Java]"+listPackage);
+    /*ArrayList<Package> listPackage = trap.searchPackage(packageName);
+	System.out.println("[Java]"+listPackage);
 
 /*
       String repoIncorrecte = "http://mauvaiseurlderepo.com/repository";
