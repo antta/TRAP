@@ -6,6 +6,8 @@ int main(int argc, char **argv)
 	if(argc >= 3)
 		if(trap.checkRepo(argv[2]))
 			std::cout << "le repository existe" << std::endl;
+		else 
+			std::cout << "le repository n'existe pas" << std::endl;
 	if(argc >= 4)
 		std::cout << " packages : " << trap.getPackagesFromName(argv[1],argv[3]) << std::endl;
 	else
