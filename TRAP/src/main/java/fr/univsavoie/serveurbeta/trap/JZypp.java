@@ -2,8 +2,8 @@ package fr.univsavoie.serveurbeta.trap;
 
 import java.util.ArrayList;
 
-class JZypp
-{
+class JZypp{
+
     public JZypp(){
 
     }
@@ -14,25 +14,18 @@ class JZypp
      * @param alias a needed name
      * @return true if the repo is valide false otherwise
      */
-    public boolean isAValidRepository(String url, String alias){
-        // not implemented yet
-        return false;
-    }
-
-    public ArrayList<Package> searchPackage(String packageName){
-        ArrayList<Package> packages = new ArrayList<Package>();
-        return null;
-    }
+  native boolean isAValidRepository(String url, String alias);
 
     /**
      *
      * @param packageName
      * @return
      */
-  public native String whatProvides(String packageName);
+  native String SearchPackage(String packageName);
   static
   {
-    System.loadLibrary("ZyppImpl");
+    System.load("/home/patrick-edouard/IdeaProjects/TRAP/TRAP/lib/libZyppImpl.so");
   }
+
 }
 

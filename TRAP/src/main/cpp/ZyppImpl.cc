@@ -2,7 +2,7 @@
 #include "trap.h"
 #include "JZypp.h"   //Fichier d'en-tête créé par javah en compilant la classe java
 
-JNIEXPORT jstring JNICALL Java_JZypp_whatProvides (JNIEnv *env, jobject obj, jstring jPackageName){
+JNIEXPORT jstring JNICALL Java_JZypp_libZyppSearchPackage (JNIEnv *env, jobject obj, jstring jPackageName){
 	
 	const char *packageName = env->GetStringUTFChars(jPackageName, 0);
  
@@ -19,3 +19,14 @@ JNIEXPORT jstring JNICALL Java_JZypp_whatProvides (JNIEnv *env, jobject obj, jst
     return env->NewStringUTF(trap.getPackagesFromName(packageName).c_str());
 }
 
+JNIEXPORT jboolean JNICALL Java_fr_univsavoie_serveurbeta_trap_JZypp_isAValidRepository (JNIEnv * env, jobject obj, jstring url, jstring alias){
+    
+    const char *packageName = env->GetStringUTFChars(url, 0);
+ 
+    //Traitement
+    
+    Trap &trap = Trap::getInstance();
+
+    return trap.checkRepo(packageName);
+    
+}
