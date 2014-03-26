@@ -20,6 +20,20 @@
     </dependency>
   </dependencies>
 
+  <plugins>
+   <plugin>
+     <groupId>org.apache.maven.plugins</groupId>
+     <artifactId>maven-jar-plugin</artifactId>
+     <configuration>
+       <archive>
+         <manifest>
+           <mainClass>fr.univsavoie.serveurbeta.trap.Main</mainClass>
+         </manifest>
+       </archive>
+     </configuration>
+   </plugin>
+ </plugins>
+
  <distributionManagement>  
   <!-- Publish the versioned releases here -->  
   <repository>  
