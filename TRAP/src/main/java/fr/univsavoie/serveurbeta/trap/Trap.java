@@ -25,12 +25,17 @@ public class Trap {
     }
 
     public String listRepositoryPackages(String repoUrl, String alias){
-        return "";
+
+        // ajoute le répo
+
+        // Recherche avec l'alias
+
+        return this.zypp.searchPackage(repoUrl);
     }
 
     public ArrayList<Package> searchPackage(String packageName){
         ArrayList<Package> packages = new ArrayList<Package>();
-        String stringPackage = this.zypp.SearchPackage(packageName);
+        String stringPackage = this.zypp.searchPackage(packageName);
 
         for(String s : stringPackage.split(";")){
             packages.add(new Package(s,"",false));
