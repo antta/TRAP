@@ -1,15 +1,15 @@
 package fr.univsavoie.serveurbeta.trap;
 
+import java.io.File;
+
 class JZypp{
 
     public JZypp(){
 
+        File lib = new File("./TRAP/resources/libZyppImpl.so");
 
-        //Runtime.getRuntime().load("fr.univsavoie.serveurbeta.trap.resources/libZyppImpl.so");
-        System.out.println(getClass().getResource("./resources/libZyppImpl.so").toString().substring(("file:").length()));
-        System.load(getClass().getResource("./resources/libZyppImpl.so").toString().substring(("file:").length()));
-        //System.load("/home/patrick-edouard/IdeaProjects/TRAP/TRAP/lib/libZyppImpl.so");
-
+        //Convert the relative path to absolute
+        System.load((lib.getAbsolutePath()));
     }
 
     /**
