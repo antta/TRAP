@@ -24,6 +24,10 @@ public class Trap {
         return instance;
     }
 
+    public String listRepositoryPackages(String repoUrl, String alias){
+        return "";
+    }
+
     public ArrayList<Package> searchPackage(String packageName){
         ArrayList<Package> packages = new ArrayList<Package>();
         String stringPackage = this.zypp.SearchPackage(packageName);

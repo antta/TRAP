@@ -1,10 +1,14 @@
 package fr.univsavoie.serveurbeta.trap;
 
-import java.util.ArrayList;
-
 class JZypp{
 
     public JZypp(){
+
+
+        //Runtime.getRuntime().load("fr.univsavoie.serveurbeta.trap.resources/libZyppImpl.so");
+        System.out.println(getClass().getResource("./resources/libZyppImpl.so").toString().substring(("file:").length()));
+        System.load(getClass().getResource("./resources/libZyppImpl.so").toString().substring(("file:").length()));
+        //System.load("/home/patrick-edouard/IdeaProjects/TRAP/TRAP/lib/libZyppImpl.so");
 
     }
 
@@ -22,10 +26,11 @@ class JZypp{
      * @return
      */
   native String SearchPackage(String packageName);
-  static
+  /*static
   {
+      System.out.println(ClassLoader.getResource("libZyppImpl.so"));
     System.load("/home/patrick-edouard/IdeaProjects/TRAP/TRAP/lib/libZyppImpl.so");
-  }
+  }*/
 
 }
 
