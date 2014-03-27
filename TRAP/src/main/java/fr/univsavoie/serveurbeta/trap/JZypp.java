@@ -10,7 +10,7 @@ class JZypp{
 
         System.out.println(lib);
         if(!lib.exists())
-            lib = new File("TRAP-1.0-SNAPSHOT.jar"+"/libZyppImpl.so"); //For jar
+            lib = new File("TRAP-1.0-SNAPSHOT.jar!"+"/libZyppImpl.so"); //For jar
         //Convert the relative path to absolute
         System.load((lib.getAbsolutePath()));
 
