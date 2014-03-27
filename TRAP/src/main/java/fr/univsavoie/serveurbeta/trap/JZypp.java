@@ -14,8 +14,10 @@ class JZypp{
         System.out.println(lib);
 
         if(!lib.exists()){
+            System.out.println("Chemin de dev innexistant\nmode jar activé");
             try{
                 lib = new File(new URL("jar:file:\"TRAP-1.0-SNAPSHOT.jar!/libZyppImpl.so\"").toURI());
+                System.out.println(lib.toPath().toString());
             }catch(URISyntaxException e){
                 e.printStackTrace();
             }catch(MalformedURLException e2){
