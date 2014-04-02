@@ -31,5 +31,5 @@
    <name>Snapshot Repo</name>  
    <url>http://serveurbeta.univ-savoie.fr:12365/content/repositories/snapshots/</url>  
   </snapshotRepository>  
- </distributionManagement>  
+ </distributionManagement>
 </project>
