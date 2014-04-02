@@ -60,6 +60,12 @@
       <version>1.0-SNAPSHOT</version>
       <type>so</type>
       <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>trap-java</artifactId>
+          <groupId>fr.univsavoie.serveurbeta.trap</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
   </dependencies>
 </project>

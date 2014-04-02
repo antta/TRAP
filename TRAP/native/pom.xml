@@ -28,10 +28,11 @@
 						</source>
 					</sources>
 					<compilerStartOptions>
-						<compilerStartOption>-std=c++11 -fPIC</compilerStartOption>
+						<compilerStartOption>-I ${java.home}/../include -I ${java.home}/../include/linux -std=c++11 -fPIC</compilerStartOption>
 					</compilerStartOptions>
 					<linkerStartOptions>
-						<linkerStartOption>-I $JAVA_HOME/include -I $JAVA_HOME/include/linux -lzypp -shared</linkerStartOption>
+						<linkerStartOption>-lzypp</linkerStartOption>
+						<linkerStartOption>-shared</linkerStartOption>
 					</linkerStartOptions>
 				</configuration>
 				<executions>
