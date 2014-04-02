@@ -1,4 +1,5 @@
 #include "trap.h"
+#include <zypp/RepoInfo.h>
 
 Trap::Trap():m_pathName("/")
 {	
@@ -30,12 +31,7 @@ std::string Trap::getPackagesFromName(std::string name, std::string repoAlias)
 	query.setMatchGlob();
 	query.setCaseSensitive(false);
 
-	zypp::Capability cap = zypp::Capability::guessPackageSpec( std::string("*") + name + std::string("*"));
-	std::string packageName = cap.detail().name().asString();
-	query.addKind(zypp::ResKind::package);
-
-	zypp::sat::SolvAttr attr = zypp::sat::SolvAttr::provides;
-	query.addDependency( attr , packageName, cap.detail().op(), cap.detail().ed(), zypp::Arch(cap.detail().arch()) );
+	query.addAttribute(zypp::sat::SolvAttr::provides , name);
 	
 	if(repoAlias != "")
 	{
@@ -82,10 +78,15 @@ void Trap::saveQueryResult()
 	m_resultString = m_buildString;
 }
 
-void Trap::addRepo(std::string repoAlias, std::string repoURL)// not working
+void Trap::addRepo(std::string repoAlias, std::string repoURL)
 {
-	//m_repoManager->addRepository (const RepoInfo &info)
-	//addService(repoAlias, repoURL);
+	zypp::RepoInfo repo;
+        repo.addBaseUrl(repoURL);
+        repo.setEnabled(true);
+        repo.setAutorefresh(true);
+        repo.setAlias(repoAlias);
+        repo.setName(repoAlias);
+	m_repoManager->addRepository(repo);
 }
 
 bool Trap::checkRepo(std::string repoURL)
@@ -97,7 +98,7 @@ bool Trap::checkRepo(std::string repoURL)
 
 void Trap::refreshRepo(std::string repoAlias)
 {
-	m_repoManager->refreshService(repoAlias);
+	m_repoManager->refreshMetadata(m_repoManager->getRepositoryInfo(repoAlias));
 }
 
 

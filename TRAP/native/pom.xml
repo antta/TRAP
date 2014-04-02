@@ -1,0 +1,66 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>fr.univsavoie.serveurbeta.trap</groupId>
+	<artifactId>trap-native</artifactId>
+	<version>1.0-SNAPSHOT</version>
+
+	<packaging>so</packaging>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>native-maven-plugin</artifactId>
+				<version>1.0-alpha-8</version>
+				<extensions>true</extensions>
+				<configuration>
+					<compilerExecutable>g++</compilerExecutable>
+					<linkerExecutable>g++</linkerExecutable>
+					<sources>
+						<source>
+							<directory>src/main/native</directory>
+							<fileNames>
+								<fileName>trap.cc</fileName>
+								<fileName>ZyppImpl.cc</fileName>
+							</fileNames>
+						</source>
+					</sources>
+					<compilerStartOptions>
+						<compilerStartOption>-std=c++11 -fPIC</compilerStartOption>
+					</compilerStartOptions>
+					<linkerStartOptions>
+						<linkerStartOption>-lzypp -shared</linkerStartOption>
+					</linkerStartOptions>
+				</configuration>
+				<executions>
+					<execution>
+						<id>javah</id>
+						<configuration>
+							<javahVerbose>true</javahVerbose>
+							<javahIncludes>
+								<javahInclude>
+									<className>fr.univsavoie.serveurbeta.trap.JZypp</className>
+									<headerName>JZypp.h</headerName>
+								</javahInclude>
+							</javahIncludes>
+						</configuration>
+						<goals>
+							<goal>javah</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>fr.univsavoie.serveurbeta.trap</groupId>
+			<artifactId>trap-java</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+	</dependencies>
+
+</project>
