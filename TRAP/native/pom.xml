@@ -28,7 +28,7 @@
 						</source>
 					</sources>
 					<compilerStartOptions>
-						<compilerStartOption>-I ${env.JAVA_HOME}/include -I ${env.JAVA_HOME}/include/linux -std=c++11 -fPIC</compilerStartOption>
+						<compilerStartOption>-I ${java.home}/include -I ${java.home}/include/linux -std=c++11 -fPIC</compilerStartOption>
 					</compilerStartOptions>
 					<linkerStartOptions>
 						<linkerStartOption>-lzypp</linkerStartOption>
