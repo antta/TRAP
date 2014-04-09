@@ -46,6 +46,7 @@
 									<headerName>JZypp.h</headerName>
 								</javahInclude>
 							</javahIncludes>
+                            <javahOutputDirectory>${project.basedir}/src/main/native/</javahOutputDirectory>
 						</configuration>
 						<goals>
 							<goal>javah</goal>

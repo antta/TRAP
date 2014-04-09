@@ -10,17 +10,57 @@ extern "C" {
 /*
  * Class:     fr_univsavoie_serveurbeta_trap_JZypp
  * Method:    isAValidRepository
- * Signature: (Ljava/lang/String;Ljava/lang/String;)Z
+ * Signature: (Ljava/lang/String;)Z
  */
 JNIEXPORT jboolean JNICALL Java_fr_univsavoie_serveurbeta_trap_JZypp_isAValidRepository
+  (JNIEnv *, jobject, jstring);
+
+/*
+ * Class:     fr_univsavoie_serveurbeta_trap_JZypp
+ * Method:    getPackage
+ * Signature: (Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_fr_univsavoie_serveurbeta_trap_JZypp_getPackage
   (JNIEnv *, jobject, jstring, jstring);
 
 /*
  * Class:     fr_univsavoie_serveurbeta_trap_JZypp
- * Method:    SearchPackage
- * Signature: (Ljava/lang/String;)Ljava/lang/String;
+ * Method:    addReposiory
+ * Signature: (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
  */
-JNIEXPORT jstring JNICALL Java_fr_univsavoie_serveurbeta_trap_JZypp_searchPackage
+JNIEXPORT void JNICALL Java_fr_univsavoie_serveurbeta_trap_JZypp_addReposiory
+  (JNIEnv *, jobject, jstring, jstring, jstring);
+
+/*
+ * Class:     fr_univsavoie_serveurbeta_trap_JZypp
+ * Method:    getPackagesFromName
+ * Signature: (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_fr_univsavoie_serveurbeta_trap_JZypp_getPackagesFromName
+  (JNIEnv *, jobject, jstring, jstring, jstring);
+
+/*
+ * Class:     fr_univsavoie_serveurbeta_trap_JZypp
+ * Method:    getPackagesFromRepo
+ * Signature: (Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_fr_univsavoie_serveurbeta_trap_JZypp_getPackagesFromRepo
+  (JNIEnv *, jobject, jstring, jstring);
+
+/*
+ * Class:     fr_univsavoie_serveurbeta_trap_JZypp
+ * Method:    refreshRepo
+ * Signature: (Ljava/lang/String;Ljava/lang/String;)V
+ */
+JNIEXPORT void JNICALL Java_fr_univsavoie_serveurbeta_trap_JZypp_refreshRepo
+  (JNIEnv *, jobject, jstring, jstring);
+
+/*
+ * Class:     fr_univsavoie_serveurbeta_trap_JZypp
+ * Method:    setPathName
+ * Signature: (Ljava/lang/String;)V
+ */
+JNIEXPORT void JNICALL Java_fr_univsavoie_serveurbeta_trap_JZypp_setPathName
   (JNIEnv *, jobject, jstring);
 
 #ifdef __cplusplus
