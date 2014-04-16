@@ -1,5 +1,18 @@
 #include "trap.h"
+
 #include <zypp/RepoInfo.h>
+#include <zypp/Repository.h>
+#include <zypp/ResPool.h>
+#include <zypp/ZYpp.h>
+#include <zypp/ZYppFactory.h>
+#include <zypp/base/Algorithm.h>
+#include <zypp/PoolQuery.h>
+#include <zypp/PathInfo.h>
+#include <zypp/Capability.h>
+#include <zypp/sat/Solvable.h>
+#include <zypp/Url.h>
+
+#include <exception>
 
 Trap::Trap():m_pathName("/")
 {	
@@ -28,10 +41,14 @@ std::string Trap::getPackagesFromName(std::string name, std::string repoAlias)
 
 	zypp::PoolQuery query;
 
-	query.setMatchGlob();
 	query.setCaseSensitive(false);
+	query.setMatchGlob();
+	
+	zypp::Capability cap = zypp::Capability::guessPackageSpec( name );
+	std::string newName = cap.detail().name().asString();
 
-	query.addAttribute(zypp::sat::SolvAttr::provides , name);
+	query.addDependency( zypp::sat::SolvAttr::name , newName, cap.detail().op(), cap.detail().ed(), zypp::Arch(cap.detail().arch()) );
+	query.addDependency( zypp::sat::SolvAttr::provides , newName, cap.detail().op(), cap.detail().ed(), zypp::Arch(cap.detail().arch()) );
 	
 	if(repoAlias != "")
 	{
@@ -76,32 +93,115 @@ void Trap::setBuildResult(std::string buildString)
 void Trap::saveQueryResult()
 {
 	m_resultString = m_buildString;
+	m_resultString = m_resultString.substr(0,m_resultString.size()-1);
 }
 
-void Trap::addRepo(std::string repoAlias, std::string repoURL)
+bool Trap::isRepositoryExists(std::string repoAlias)
 {
-	zypp::RepoInfo repo;
-        repo.addBaseUrl(repoURL);
-        repo.setEnabled(true);
-        repo.setAutorefresh(true);
-        repo.setAlias(repoAlias);
-        repo.setName(repoAlias);
-	m_repoManager->addRepository(repo);
+	return m_repoManager->hasRepo(repoAlias);
+}
+
+bool Trap::addRepo(std::string repoAlias, std::string repoURL)
+{
+	if(!checkRepo(repoURL))
+	{
+		std::cerr << "[ERROR] in Trapp::addRepo : " << repoURL << " is not a valid URL Repository" << std::endl;
+		return false;
+	}
+	if(m_repoManager->hasRepo(repoAlias))
+	{
+		std::cerr << "[WARNING] in Trapp::addRepo : Repository Already Exist" << std::endl;
+		std::cerr << "[TODO] : Change the repository data instead of doing nothing" << std::endl;
+		return true;
+	}
+	else
+	{
+		try
+		{
+			zypp::RepoInfo repo;
+			repo.setBaseUrl(repoURL);
+			repo.setEnabled(true);
+			repo.setAutorefresh(false);
+			repo.setGpgCheck(true);
+			repo.setGpgKeyUrl(zypp::Url("http://download.opensuse.org/repositories/home:/henri_gomez:/devops-incubator/openSUSE_13.1/repodata/repomd.xml.key"));
+			repo.setKeepPackages(false);
+			repo.setAlias(repoAlias);
+			repo.setName(repoAlias);
+			repo.setProbedType(m_repoManager->probe(repoURL));
+			repo.setPath(zypp::Pathname(m_pathName));
+			m_repoManager->addRepository(repo);
+		}
+		catch(const std::exception &e)
+		{
+			std::cerr << "[ERROR] Exception caught in Trapp::addRepo : "<< e.what() << std::endl;
+			return false;
+		}
+		return true;
+	}
 }
 
 bool Trap::checkRepo(std::string repoURL)
 {
-	if (m_repoManager->probe(repoURL).asString() != std::string("NONE"))
-		return true;
-	return false;
+	try
+	{
+		if (m_repoManager->probe(repoURL).asString() != std::string("NONE"))
+			return true;
+		return false;
+	}
+	catch (const std::exception &e)
+	{
+		std::cerr << "[INFO] in Trap::checkRepo, unable to reach : " << repoURL << " (verify you are connected to the network) : Exception Caught :" << e.what() << std::endl;
+		return false;
+	}
 }
 
-void Trap::refreshRepo(std::string repoAlias)
+bool Trap::refreshRepo(std::string repoAlias)
 {
-	m_repoManager->refreshMetadata(m_repoManager->getRepositoryInfo(repoAlias));
+	bool refreshSuccessfull = false;
+	try 
+	{
+	zypp::Pathname path( m_pathName );
+	zypp::ZYppFactory::instance().getZYpp()->initializeTarget( path, false );
+
+	zypp::RepoInfo repo = m_repoManager->getRepositoryInfo(repoAlias);
+	
+		for(zypp::RepoInfo::urls_const_iterator it = repo.baseUrlsBegin(); it != repo.baseUrlsEnd(); ++it)
+		{
+			try
+			{
+				//RepoStatus metadataStatus (const RepoInfo &info) const
+				if(m_repoManager->checkIfToRefreshMetadata (repo, *it) == zypp::RepoManager::REFRESH_NEEDED)
+				{
+					m_repoManager->refreshMetadata(repo, zypp::RepoManager::RefreshIfNeeded);
+					m_repoManager->buildCache(repo, zypp::RepoManager::BuildIfNeeded);
+					refreshSuccessfull = true;
+					break;
+				}
+			} 
+			catch(const std::exception &e)
+			{
+				std::cerr << "[ERROR] in Trap::refreshRepo : " << *it << " doesn't look good : Exception Caught :" << e.what() << std::endl;
+			}
+		}
+	}
+	catch (const std::exception &e)
+	{
+		std::cerr << "[ERROR] in Trap::refreshRepo : Exception Caught :" << e.what() << std::endl;
+	}
+	return refreshSuccessfull;
 }
 
 
+std::string Trap::getAllPackages(std::string repoAlias)
+{
+	return getPackagesFromName("",repoAlias);
+}
+
+void Trap::clean()
+{
+	for(zypp::RepoManager::RepoConstIterator it = m_repoManager->repoBegin(); it !=  m_repoManager->repoEnd(); it = m_repoManager->repoBegin())
+	m_repoManager->removeRepository(*it);
+}
 
 QueryResult::QueryResult()
 {
@@ -117,29 +217,3 @@ bool QueryResult::operator()( const zypp::PoolItem & pi )
 	trap.addBuildResult(pi->name() + ",");
 	return true;
 }
-
-std::string getAllPackages(std::string repoAlias = "")
-{
-
-}
-
-/*
-Récupérer le repoManageur :
-zypp::RepoManager::RepoManager (const RepoManagerOptions & options = RepoManagerOptions())
-	->zypp::RepoManagerOptions::RepoManagerOptions (const Pathname & root_r = Pathname())	
-
-
-Regarder si le repo existe :
-repo::RepoType zypp::RepoManager::probe	(const Url & url) const
-	-> const std::string & 	asString () const
-		->(doit être égal à tout sauf NONE_e)
-
-Refresh le service :
-void zypp::RepoManager::refreshService	(const std::string & alias)
-
-Rajouter un repo :
-void zypp::RepoManager::addService(const std::string & alias, const Url & url)	
-
-Récupérer les info d'un service :
-ServiceInfo zypp::RepoManager::getService( const std::string & alias) const
-*/

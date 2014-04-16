@@ -2,14 +2,7 @@
 #include <string>
 #include <sstream>
 
-#include <zypp/ZYpp.h>
-#include <zypp/ZYppFactory.h>
-#include <zypp/PathInfo.h>
-#include <zypp/Capability.h>
-#include <zypp/sat/Solvable.h>
 #include <zypp/PoolItem.h>
-#include <zypp/base/Algorithm.h>
-#include <zypp/PoolQuery.h>
 #include <zypp/RepoManager.h>
 
 class QueryResult
@@ -34,12 +27,17 @@ public:
 	void setPathName(std::string pathName = "/");
 
 	std::string getAllPackages(std::string repoAlias = "");
-	std::string getPackagesFromName(std::string name = "", std::string repoAlias = "");
+	std::string getPackagesFromName(std::string name = "", std::string repoAlias = "");//Act very strange especially when 
 	std::string lastQueryResult();
-	void addRepo(std::string repoAlias, std::string repoURL);
+	bool isRepositoryExists(std::string repoAlias); 
+	bool addRepo(std::string repoAlias, std::string repoURL);
 	bool checkRepo(std::string repoURL);
-	void refreshRepo(std::string repoAlias);
+	bool refreshRepo(std::string repoAlias);//Does not work at all
 	
+	void clean();
+	
+	void setBuildResult(std::string buildString = "");
+	void addBuildResult(std::string addString);
 
 private:
 
@@ -47,14 +45,11 @@ private:
 	std::string m_pathName;
 	zypp::RepoManager *m_repoManager;
 	
-	std::string m_buildString;//used to overwrite the result string only when the querry is finished.
+	std::string m_buildString;//Used to overwrite the result string only when the querry is finished.
 	std::string m_resultString;
 
 	Trap();
 	~Trap();
-
-	void setBuildResult(std::string buildString = "");
-	void addBuildResult(std::string addString);
 
 	void setRepoManager();
 	void saveQueryResult();

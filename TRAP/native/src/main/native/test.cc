@@ -37,7 +37,7 @@ int main(int argc, char **argv)
 	if(argc > 4)
 		trap.setPathName(argv[4]);
 	else
-		trap.setPathName("/home/test/zypperRoot");
+		trap.setPathName("/home/gregoire/Devel/zypperRoot/");
 	std::cout << "[INFO] Trap instance get and path set" << std::endl;
 	std::cout << "---------------------------------------------------" << std::endl;
 	
@@ -52,14 +52,14 @@ int main(int argc, char **argv)
 	else
 	{
 		testCount += 2;
-		if(trap.checkRepo("http://download.opensuse.org/repositories/home:/henri_gomez:/devops-incubator/openSUSE_12.3/"))
+		if(trap.checkRepo("http://download.opensuse.org/repositories/home:/henri_gomez:/devops-incubator/openSUSE_13.1/"))
 		{
-			std::cout << "[OK] URL http://download.opensuse.org/repositories/home:/henri_gomez:/devops-incubator/openSUSE_12.3/  is a good Package Repository"  << std::endl;
+			std::cout << "[OK] URL http://download.opensuse.org/repositories/home:/henri_gomez:/devops-incubator/openSUSE_13.1/  is a good Package Repository"  << std::endl;
 			testPassed ++;
 		}
 		else
-			std::cout << " [ERROR] URL http://download.opensuse.org/repositories/home:/henri_gomez:/devops-incubator/openSUSE_12.3/ should be a repository"  << std::endl;
-		if(trap.checkRepo("http://AnythingButNotARealRepo"))
+			std::cout << " [ERROR] URL http://download.opensuse.org/repositories/home:/henri_gomez:/devops-incubator/openSUSE_13.1/ should be a repository"  << std::endl;
+		if(trap.checkRepo("http://AnythingButNotARealRepo.fr/"))
 			std::cout << " [ERROR] URL http://AnythingButNotARealRepo should not be considered as a repository"  << std::endl;
 		else
 		{
@@ -81,7 +81,7 @@ int main(int argc, char **argv)
 	else
 	{
 		testCount ++;
-		trap.addRepo("hgomez","http://download.opensuse.org/repositories/home:/henri_gomez:/devops-incubator/openSUSE_12.3/");
+		trap.addRepo("hgomez","http://download.opensuse.org/repositories/home:/henri_gomez:/devops-incubator/openSUSE_13.1/");
 		if(trap.isRepositoryExists("hgomez"))
 		{
 			std::cout << "[OK] Repository : hgomez successfully added or updated"  << std::endl;
