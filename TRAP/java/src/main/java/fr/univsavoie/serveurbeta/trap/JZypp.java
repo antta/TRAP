@@ -32,7 +32,7 @@ public class JZypp{
      * @param url of a repository
      * @param alias name for the repo
      */
-    native void addReposiory(String sysRoot, String url, String alias);
+    native void addRepository(String sysRoot, String url, String alias);
 
     /**
      *
