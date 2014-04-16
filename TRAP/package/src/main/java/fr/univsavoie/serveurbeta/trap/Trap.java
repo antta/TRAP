@@ -1,15 +1,14 @@
 package fr.univsavoie.serveurbeta.trap;
 
+import org.apache.commons.io.IOUtils;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 
-import org.apache.commons.io.IOUtils;
+//import fr.univsavoie.serveurbeta.trap.JZypp;
 
 /**
  * Created by patrick-edouard on 3/20/14.
@@ -19,14 +18,18 @@ public class Trap {
 	private static final String LIB_NAME = "trap-native-1.0-SNAPSHOT.so";
 	
 	private JZypp zypp;
+
 	/**
 	 * Path to a system root folder
 	 */
 	private String sysRoot = "/";
-	
-	private static Trap instance;
 
-	private Trap() {
+    /**
+     * New instance for Trap.
+     * Due to cpp issues, it is highly recommended to use only one instance of Trap in your whole program.
+     * @param sysRoot refer to your snapshot system sample : ~/myVM/snapshot-1-0-2/root witch contain a etc/zypp/repos.d repository
+     */
+	public Trap(String sysRoot) {
 		this.zypp = new JZypp();
 
 		InputStream resource = this.getClass().getClassLoader().getResourceAsStream(LIB_NAME);
@@ -39,30 +42,28 @@ public class Trap {
 	        IOUtils.copy(resource, out);
 			System.load(tempFile.getAbsolutePath());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
+        this.sysRoot = sysRoot;
+        this.initSystem();
 	}
 
-	public static Trap getInstance() {
-		if (instance == null) {
-			instance = new Trap();
-		}
-		return instance;
-	}
+    /**
+     *
+     */
+    private void initSystem(){
+        this.zypp.setPathName(this.sysRoot);
+    }
 
-	public String listRepositoryPackages(String repoUrl, String alias) {
-
-		// ajoute le répo
-
-		// Recherche avec l'alias
-
-		return this.zypp.searchPackage(repoUrl);
-	}
-
+    /**
+     *
+     * @param packageName
+     * @return
+     */
 	public ArrayList<Package> searchPackage(String packageName) {
 		ArrayList<Package> packages = new ArrayList<Package>();
-		String stringPackage = this.zypp.searchPackage(packageName);
+		String stringPackage = this.zypp.getPackage(packageName, this.sysRoot);
 
 		for (String s : stringPackage.split(";")) {
 			packages.add(new Package(s, "", false));
@@ -71,23 +72,48 @@ public class Trap {
 		return packages;
 	}
 
-	public void setSysRoot(String sysRoot) {
-		this.sysRoot = sysRoot;
-	}
+    /**
+     *
+     * @param repoURL
+     * @return
+     */
+    public static boolean isAValidRepository(String repoURL) {
+        return new JZypp().isAValidRepository(repoURL);
+    }
 
-	public boolean isAValidRepository(String repoURL) {
-		return this.zypp.isAValidRepository(repoURL, "useless");
-	}
+    /**
+     *
+     * @param repoAlias
+     */
+    public void refreshRepo(String repoAlias){
+        this.zypp.refreshRepo(sysRoot, repoAlias);
+    }
 
-	public void addRepository(String repoURL) {
+    /**
+     *
+     * @param repoAlias
+     * @param repoURL
+     */
+    public void addReposiory(String repoAlias, String repoURL){
+        this.zypp.addReposiory(this.sysRoot, repoURL, repoAlias);
+    }
 
-	}
+    /**
+     *
+     * @param packageName
+     * @param repoAlias
+     * @return
+     */
+    public String getPackagesFromName(String packageName, String repoAlias){
+        return this.zypp.getPackagesFromName(this.sysRoot, packageName, repoAlias);
+    }
 
-	public static void main(String[] args) {
-		Trap trap = getInstance();
-
-		for (Package p : trap.searchPackage("kiwi")) {
-			System.out.println(p);
-		}
-	}
+    /**
+     *
+     * @param repoAlias
+     * @return
+     */
+    public String getPackagesIn(String repoAlias){
+        return this.zypp.getPackagesFromRepo(this.sysRoot, repoAlias);
+    }
 }
