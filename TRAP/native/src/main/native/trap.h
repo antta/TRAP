@@ -31,15 +31,15 @@ public:
 		return s_instance;
 	}
 
+	void setPathName(std::string pathName = "/");
 
+	std::string getAllPackages(std::string repoAlias = "");
 	std::string getPackagesFromName(std::string name = "", std::string repoAlias = "");
 	std::string lastQueryResult();
-	void setBuildResult(std::string buildString = "");
-	void addBuildResult(std::string addString);
-	void setPathName(std::string pathName = "/");
 	void addRepo(std::string repoAlias, std::string repoURL);
 	bool checkRepo(std::string repoURL);
 	void refreshRepo(std::string repoAlias);
+	
 
 private:
 
@@ -52,6 +52,9 @@ private:
 
 	Trap();
 	~Trap();
+
+	void setBuildResult(std::string buildString = "");
+	void addBuildResult(std::string addString);
 
 	void setRepoManager();
 	void saveQueryResult();

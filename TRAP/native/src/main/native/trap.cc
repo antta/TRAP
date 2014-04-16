@@ -118,6 +118,11 @@ bool QueryResult::operator()( const zypp::PoolItem & pi )
 	return true;
 }
 
+std::string getAllPackages(std::string repoAlias = "")
+{
+
+}
+
 /*
 Récupérer le repoManageur :
 zypp::RepoManager::RepoManager (const RepoManagerOptions & options = RepoManagerOptions())
