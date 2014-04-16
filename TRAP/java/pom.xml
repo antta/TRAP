@@ -6,4 +6,9 @@
 	<artifactId>trap-java</artifactId>
 	<version>1.0-SNAPSHOT</version>
 
+    <parent>
+        <groupId>fr.univsavoie.serveurbeta.trap</groupId>
+        <artifactId>trap</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
 </project>

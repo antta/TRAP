@@ -95,7 +95,7 @@ public class Trap {
      * @param repoURL
      */
     public void addReposiory(String repoAlias, String repoURL){
-        this.zypp.addReposiory(this.sysRoot, repoURL, repoAlias);
+        this.zypp.addRepository(this.sysRoot, repoURL, repoAlias);
     }
 
     /**

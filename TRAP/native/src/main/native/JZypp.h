@@ -25,10 +25,10 @@ JNIEXPORT jstring JNICALL Java_fr_univsavoie_serveurbeta_trap_JZypp_getPackage
 
 /*
  * Class:     fr_univsavoie_serveurbeta_trap_JZypp
- * Method:    addReposiory
+ * Method:    addRepository
  * Signature: (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
  */
-JNIEXPORT void JNICALL Java_fr_univsavoie_serveurbeta_trap_JZypp_addReposiory
+JNIEXPORT void JNICALL Java_fr_univsavoie_serveurbeta_trap_JZypp_addRepository
   (JNIEnv *, jobject, jstring, jstring, jstring);
 
 /*
