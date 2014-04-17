@@ -25,12 +25,13 @@ public:
 	}
 
 	void setPathName(std::string pathName = "/");
+	std::string getPathName();
 
 	std::string getAllPackages(std::string repoAlias = "");
-	std::string getPackagesFromName(std::string name = "", std::string repoAlias = "");//Act very strange especially when 
+	std::string getPackagesFromName(std::string name = "", std::string repoAlias = "");//Act very strange
 	std::string lastQueryResult();
 	bool isRepositoryExists(std::string repoAlias); 
-	bool addRepo(std::string repoAlias, std::string repoURL);
+	bool addRepo(std::string repoAlias, std::string repoURL, std::string gpgCheckURL = "");
 	bool checkRepo(std::string repoURL);
 	bool refreshRepo(std::string repoAlias);//Does not work at all
 	

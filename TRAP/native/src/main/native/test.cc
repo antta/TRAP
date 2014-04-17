@@ -3,6 +3,7 @@
 int main(int argc, char **argv)
 {
 	std::cout << "Starting Tests for TRAP"<< std::endl;
+	
 	int testCount = 0, testPassed = 0;
 	if(argc < 2)
 	{
@@ -37,11 +38,18 @@ int main(int argc, char **argv)
 	if(argc > 4)
 		trap.setPathName(argv[4]);
 	else
-		trap.setPathName("/home/gregoire/Devel/zypperRoot/");
+	{
+		trap.setPathName("zypperRoot/");
+	}	
 	std::cout << "[INFO] Trap instance get and path set" << std::endl;
 	std::cout << "---------------------------------------------------" << std::endl;
 	
-	std::cout << "[TEST] Probe Repository" << std::endl;
+	if(argc < 2)
+	{
+		std::cout << "[INFO] Cleaning efore starting" << std::endl;
+		trap.clean();
+	}	std::cout << "[TEST] Probe Repository" << std::endl;
+	std::cout << "---------------------------------------------------" << std::endl;
 	if(argc > 2)
 	{
 		if(trap.checkRepo(argv[2]))
@@ -59,11 +67,12 @@ int main(int argc, char **argv)
 		}
 		else
 			std::cout << " [ERROR] URL http://download.opensuse.org/repositories/home:/henri_gomez:/devops-incubator/openSUSE_13.1/ should be a repository"  << std::endl;
+		
 		if(trap.checkRepo("http://AnythingButNotARealRepo.fr/"))
-			std::cout << " [ERROR] URL http://AnythingButNotARealRepo should not be considered as a repository"  << std::endl;
+			std::cout << " [ERROR] URL http://AnythingButNotARealRepo.fr/ should not be considered as a repository"  << std::endl;
 		else
 		{
-			std::cout << "[OK] URL http://AnythingButNotARealRepo is not a Package Repository"  << std::endl;
+			std::cout << "[OK] URL http://AnythingButNotARealRepo.fr/ is not a Package Repository"  << std::endl;
 			testPassed ++;
 		}
 	}
@@ -81,7 +90,7 @@ int main(int argc, char **argv)
 	else
 	{
 		testCount ++;
-		trap.addRepo("hgomez","http://download.opensuse.org/repositories/home:/henri_gomez:/devops-incubator/openSUSE_13.1/");
+		trap.addRepo("hgomez","http://download.opensuse.org/repositories/home:/henri_gomez:/devops-incubator/openSUSE_13.1/","http://download.opensuse.org/repositories/home:/henri_gomez:/devops-incubator/openSUSE_13.1/repodata/repomd.xml.key");
 		if(trap.isRepositoryExists("hgomez"))
 		{
 			std::cout << "[OK] Repository : hgomez successfully added or updated"  << std::endl;
@@ -183,8 +192,6 @@ int main(int argc, char **argv)
 		std::cout << "[ERROR] Packages not found" << std::endl;
 	std::cout << "---------------------------------------------------" << std::endl;
 	
-	std::cout << "[INFO] Cleaning" << std::endl;
-	trap.clean();
 	std::cout << "***************************************************" << std::endl;
 	std::cout << "[RESULT] Test passed : " << testPassed << "/" << testCount << std::endl;
 	

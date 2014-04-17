@@ -14,6 +14,10 @@
 
 #include <exception>
 
+#include <stdio.h>
+#include <unistd.h>
+    #define GetCurrentDir getcwd
+
 Trap::Trap():m_pathName("/")
 {	
 	m_repoManager = NULL;
@@ -36,33 +40,45 @@ void Trap::setRepoManager()
 std::string Trap::getPackagesFromName(std::string name, std::string repoAlias)
 {
 	m_buildString = "";
-
-	zypp::ZYpp::Ptr zyppPtr = zypp::ZYppFactory::instance().getZYpp();
-
-	zypp::PoolQuery query;
-
-	query.setCaseSensitive(false);
-	query.setMatchGlob();
 	
-	zypp::Capability cap = zypp::Capability::guessPackageSpec( name );
-	std::string newName = cap.detail().name().asString();
-
-	query.addDependency( zypp::sat::SolvAttr::name , newName, cap.detail().op(), cap.detail().ed(), zypp::Arch(cap.detail().arch()) );
-	query.addDependency( zypp::sat::SolvAttr::provides , newName, cap.detail().op(), cap.detail().ed(), zypp::Arch(cap.detail().arch()) );
-	
-	if(repoAlias != "")
+	try
 	{
-		query.addRepo(repoAlias);
-	}
+		
+		zypp::ZYpp::Ptr zyppPtr = zypp::ZYppFactory::instance().getZYpp();
 
-	zypp::Pathname sysRoot( m_pathName );
+		zypp::PoolQuery query;
 
-	zyppPtr->initializeTarget( sysRoot, false );
-	zyppPtr->target()->load();
-	zyppPtr->resolver()->resolvePool();
+		query.setCaseSensitive(false);
+		query.setMatchGlob();
+		
+		zypp::Capability cap = zypp::Capability::guessPackageSpec( name );
+		std::string newName = cap.detail().name().asString();
+
+		query.addDependency( zypp::sat::SolvAttr::name , newName, cap.detail().op(), cap.detail().ed(), zypp::Arch(cap.detail().arch()) );
+		query.addDependency( zypp::sat::SolvAttr::provides , newName, cap.detail().op(), cap.detail().ed(), zypp::Arch(cap.detail().arch()) );
+		
+		if(repoAlias != "")
+		{
+			query.addRepo(repoAlias);
+		}
+
+		zypp::Pathname sysRoot( m_pathName );
+		
+		
+			zyppPtr->initializeTarget( sysRoot, false );
+			zyppPtr->target()->load();
+			zyppPtr->resolver()->resolvePool();
+		
+			
+		zypp::invokeOnEach(query.poolItemBegin(), query.poolItemEnd(), m_result);
+		saveQueryResult();
 	
-	zypp::invokeOnEach(query.poolItemBegin(), query.poolItemEnd(), m_result);
-	saveQueryResult();
+	}
+	catch (const std::exception &e)
+	{
+		std::cerr << "[ERROR] Exception caught in Trapp::getPackagesFromName : "<< e.what() << std::endl;
+		return "";
+	}
 	return m_resultString;
 }
 
@@ -75,9 +91,29 @@ void Trap::setPathName(std::string pathName)
 {
 	if(m_pathName != pathName)
 	{
+		if(pathName[0] != '/')
+		{
+			char cCurrentPath[FILENAME_MAX];
+
+			if (!GetCurrentDir(cCurrentPath, sizeof(cCurrentPath)))
+			{
+				std::cerr << "[ERROR] When trying to get the current directory : "<< errno << std::endl;
+			}
+			else
+			{
+				std::cout << "[INFO] : Changing Path from relative toAbsolute, adding : " << cCurrentPath << std::endl;
+				cCurrentPath[sizeof(cCurrentPath) - 1] = '\0';
+				pathName = std::string(cCurrentPath) + std::string("/") + pathName;
+			}
+		}
 		m_pathName = pathName;
 		setRepoManager();
 	}
+}
+
+std::string Trap::getPathName()
+{
+	return m_pathName;
 }
 
 void Trap::addBuildResult(std::string addString)
@@ -101,7 +137,7 @@ bool Trap::isRepositoryExists(std::string repoAlias)
 	return m_repoManager->hasRepo(repoAlias);
 }
 
-bool Trap::addRepo(std::string repoAlias, std::string repoURL)
+bool Trap::addRepo(std::string repoAlias, std::string repoURL, std::string gpgCheckURL)
 {
 	if(!checkRepo(repoURL))
 	{
@@ -122,8 +158,11 @@ bool Trap::addRepo(std::string repoAlias, std::string repoURL)
 			repo.setBaseUrl(repoURL);
 			repo.setEnabled(true);
 			repo.setAutorefresh(false);
-			repo.setGpgCheck(true);
-			repo.setGpgKeyUrl(zypp::Url("http://download.opensuse.org/repositories/home:/henri_gomez:/devops-incubator/openSUSE_13.1/repodata/repomd.xml.key"));
+			if(gpgCheckURL != "")
+			{
+				repo.setGpgCheck(true);
+				repo.setGpgKeyUrl(zypp::Url(gpgCheckURL));
+			}
 			repo.setKeepPackages(false);
 			repo.setAlias(repoAlias);
 			repo.setName(repoAlias);
