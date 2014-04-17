@@ -77,7 +77,7 @@ public class Trap {
      * @param repoURL
      * @return
      */
-    public static boolean isAValidRepository(String repoURL) {
+    public boolean isAValidRepository(String repoURL) {
         return new JZypp().isAValidRepository(repoURL);
     }
 
