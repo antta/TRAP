@@ -7,7 +7,9 @@ class Main {
 		Trap trap = new Trap("/");
 
 		String repoCorrecte = "http://download.opensuse.org/repositories/home:/henri_gomez:/devops-incubator/openSUSE_13.1/";
-		System.out.println("L'url " + repoCorrecte + " est "
+		String gpgGomez = "http://download.opensuse.org/repositories/home:/henri_gomez:/devops-incubator/openSUSE_13.1/repodata/repomd.xml.key";
+
+        System.out.println("L'url " + repoCorrecte + " est "
 				+ trap.isAValidRepository(repoCorrecte));
 
         String packageName = "kiwi";

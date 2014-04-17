@@ -102,7 +102,7 @@ JNIEXPORT void JNICALL Java_fr_univsavoie_serveurbeta_trap_JZypp_addReposiory(JN
         /*
         * Do stuff
         */
-        trap.addRepo(std::string(url), std::string(alias));
+        trap.addRepo(std::string(alias), std::string(url));
 
         /*
         * Release strings
@@ -133,7 +133,7 @@ JNIEXPORT void JNICALL Java_fr_univsavoie_serveurbeta_trap_JZypp_addRepository__
         /*
         * Do stuff
         */
-        trap.addRepo(std::string(repoUrl), std::string(alias), std::string(gpgUrl));
+        trap.addRepo(std::string(alias), std::string(repoUrl), std::string(gpgUrl));
 
         /*
         * Release strings
