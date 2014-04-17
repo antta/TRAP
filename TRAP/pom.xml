@@ -23,8 +23,8 @@
    <id>deploymentRepo</id>  
    <name>Release Repo</name>  
    <url>http://serveurbeta.univ-savoie.fr:12365/content/repositories/releases/</url>  
-  </repository>  
-  
+  </repository>
+
   <!-- Publish the versioned releases here -->  
   <snapshotRepository>  
    <id>deploymentRepo</id>  
@@ -32,4 +32,5 @@
    <url>http://serveurbeta.univ-savoie.fr:12365/content/repositories/snapshots/</url>  
   </snapshotRepository>  
  </distributionManagement>
+
 </project>
