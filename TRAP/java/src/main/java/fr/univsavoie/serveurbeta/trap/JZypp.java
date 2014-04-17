@@ -45,6 +45,8 @@ public class JZypp{
     /**
      *
      * @param repoName
+     * @param
+     * @param
      * @return
      */
     native String getPackagesFromRepo(String sysRoot, String repoName);
