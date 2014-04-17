@@ -35,6 +35,16 @@ public class JZypp{
     native void addRepository(String sysRoot, String url, String alias);
 
     /**
+     * Add the given repository to the current repo.d
+     *
+     * Need root privilège if the sysroot is your distribution's root
+     *
+     * @param url of a repository
+     * @param alias name for the repo
+     */
+    native void addRepository(String sysRoot, String url, String urlGPG, String alias);
+
+    /**
      *
      * @param packageName
      * @param repoName
