@@ -28,8 +28,16 @@ JNIEXPORT jstring JNICALL Java_fr_univsavoie_serveurbeta_trap_JZypp_getPackage
  * Method:    addRepository
  * Signature: (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
  */
-JNIEXPORT void JNICALL Java_fr_univsavoie_serveurbeta_trap_JZypp_addRepository
+JNIEXPORT void JNICALL Java_fr_univsavoie_serveurbeta_trap_JZypp_addRepository__Ljava_lang_String_2Ljava_lang_String_2Ljava_lang_String_2
   (JNIEnv *, jobject, jstring, jstring, jstring);
+
+/*
+ * Class:     fr_univsavoie_serveurbeta_trap_JZypp
+ * Method:    addRepository
+ * Signature: (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+ */
+JNIEXPORT void JNICALL Java_fr_univsavoie_serveurbeta_trap_JZypp_addRepository__Ljava_lang_String_2Ljava_lang_String_2Ljava_lang_String_2Ljava_lang_String_2
+  (JNIEnv *, jobject, jstring, jstring, jstring, jstring);
 
 /*
  * Class:     fr_univsavoie_serveurbeta_trap_JZypp

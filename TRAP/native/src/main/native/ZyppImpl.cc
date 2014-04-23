@@ -102,7 +102,7 @@ JNIEXPORT void JNICALL Java_fr_univsavoie_serveurbeta_trap_JZypp_addReposiory(JN
         /*
         * Do stuff
         */
-        trap.addRepo(std::string(url), std::string(alias));
+        trap.addRepo(std::string(alias), std::string(url));
 
         /*
         * Release strings
@@ -111,6 +111,38 @@ JNIEXPORT void JNICALL Java_fr_univsavoie_serveurbeta_trap_JZypp_addReposiory(JN
         env->ReleaseStringUTFChars(jURL, url);
         env->ReleaseStringUTFChars(jAlias, alias);
   }
+
+/*
+ * Class:     fr_univsavoie_serveurbeta_trap_JZypp
+ * Method:    addRepository
+ * Signature: (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+ */
+JNIEXPORT void JNICALL Java_fr_univsavoie_serveurbeta_trap_JZypp_addRepository__Ljava_lang_String_2Ljava_lang_String_2Ljava_lang_String_2Ljava_lang_String_2
+(JNIEnv * env, jobject, jstring jSysRoot, jstring jRepoURL, jstring jGPGURL, jstring jAlias) {
+        const char *sysRoot = env->GetStringUTFChars(jSysRoot, 0);
+        const char *repoUrl = env->GetStringUTFChars(jRepoURL, 0);
+        const char *gpgUrl = env->GetStringUTFChars(jGPGURL, 0);
+        const char *alias = env->GetStringUTFChars(jAlias, 0);
+
+        /*
+        * Get environment
+        */
+        Trap &trap = Trap::getInstance();
+        trap.setPathName(sysRoot);
+
+        /*
+        * Do stuff
+        */
+        trap.addRepo(std::string(alias), std::string(repoUrl), std::string(gpgUrl));
+
+        /*
+        * Release strings
+        */
+        env->ReleaseStringUTFChars(jSysRoot, sysRoot);
+        env->ReleaseStringUTFChars(jRepoURL, repoUrl);
+        env->ReleaseStringUTFChars(jGPGURL, gpgUrl);
+        env->ReleaseStringUTFChars(jAlias, alias);
+    }
 
 /*
  * Class:     fr_univsavoie_serveurbeta_trap_JZypp
@@ -218,5 +250,20 @@ JNIEXPORT void JNICALL Java_fr_univsavoie_serveurbeta_trap_JZypp_refreshRepo(JNI
  */
 JNIEXPORT void JNICALL Java_fr_univsavoie_serveurbeta_trap_JZypp_setPathName
     (JNIEnv * env, jobject, jstring jSysRoot){
+     /*
+    * Get strings
+    */
+    const char *sysRoot = env->GetStringUTFChars(jSysRoot, 0);
+
+    /*
+    * Get environment
+    */
+    Trap &trap = Trap::getInstance();
+    trap.setPathName(sysRoot);
+
+    /*
+    * Release strings
+    */
+    env->ReleaseStringUTFChars(jSysRoot, sysRoot);
 
  }
