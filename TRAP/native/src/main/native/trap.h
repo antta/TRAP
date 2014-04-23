@@ -46,13 +46,14 @@ private:
 	std::string m_pathName;
 	zypp::RepoManager *m_repoManager;
 	
+	void initRepoManager();
+	
 	std::string m_buildString;//Used to overwrite the result string only when the querry is finished.
 	std::string m_resultString;
 
 	Trap();
 	~Trap();
 
-	void setRepoManager();
 	void saveQueryResult();
 
 	Trap(Trap const&);              // Don't Implement.

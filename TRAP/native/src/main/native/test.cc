@@ -46,10 +46,12 @@ int main(int argc, char **argv)
 	
 	if(argc < 2)
 	{
-		std::cout << "[INFO] Cleaning efore starting" << std::endl;
+		std::cout << "[INFO] Cleaning before starting" << std::endl;
 		trap.clean();
-	}	std::cout << "[TEST] Probe Repository" << std::endl;
+	}
 	std::cout << "---------------------------------------------------" << std::endl;
+	
+	std::cout << "[TEST] Probe Repository" << std::endl;
 	if(argc > 2)
 	{
 		if(trap.checkRepo(argv[2]))
@@ -60,13 +62,13 @@ int main(int argc, char **argv)
 	else
 	{
 		testCount += 2;
-		if(trap.checkRepo("http://download.opensuse.org/repositories/home:/henri_gomez:/devops-incubator/openSUSE_13.1/"))
+		if(trap.checkRepo("http://download.opensuse.org/repositories/home:/henri_gomez:/devops-incubator/openSUSE_13.1"))
 		{
-			std::cout << "[OK] URL http://download.opensuse.org/repositories/home:/henri_gomez:/devops-incubator/openSUSE_13.1/  is a good Package Repository"  << std::endl;
+			std::cout << "[OK] URL http://download.opensuse.org/repositories/home:/henri_gomez:/devops-incubator/openSUSE_13.1  is a good Package Repository"  << std::endl;
 			testPassed ++;
 		}
 		else
-			std::cout << " [ERROR] URL http://download.opensuse.org/repositories/home:/henri_gomez:/devops-incubator/openSUSE_13.1/ should be a repository"  << std::endl;
+			std::cout << " [ERROR] URL http://download.opensuse.org/repositories/home:/henri_gomez:/devops-incubator/openSUSE_13.1 should be a repository"  << std::endl;
 		
 		if(trap.checkRepo("http://AnythingButNotARealRepo.fr/"))
 			std::cout << " [ERROR] URL http://AnythingButNotARealRepo.fr/ should not be considered as a repository"  << std::endl;
@@ -90,7 +92,7 @@ int main(int argc, char **argv)
 	else
 	{
 		testCount ++;
-		trap.addRepo("hgomez","http://download.opensuse.org/repositories/home:/henri_gomez:/devops-incubator/openSUSE_13.1/","http://download.opensuse.org/repositories/home:/henri_gomez:/devops-incubator/openSUSE_13.1/repodata/repomd.xml.key");
+		trap.addRepo("hgomez","http://download.opensuse.org/repositories/home:/henri_gomez:/devops-incubator/openSUSE_13.1","http://download.opensuse.org/repositories/home:/henri_gomez:/devops-incubator/openSUSE_13.1/repodata/repomd.xml.key");
 		if(trap.isRepositoryExists("hgomez"))
 		{
 			std::cout << "[OK] Repository : hgomez successfully added or updated"  << std::endl;
