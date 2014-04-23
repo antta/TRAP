@@ -15,6 +15,7 @@ class Main {
         String packageName = "kiwi";
 
 		ArrayList<Package> listPackage = trap.searchPackage(packageName);
+
 		System.out.println("[Java]" + listPackage);
 	}
 }

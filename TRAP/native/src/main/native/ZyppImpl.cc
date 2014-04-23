@@ -250,5 +250,20 @@ JNIEXPORT void JNICALL Java_fr_univsavoie_serveurbeta_trap_JZypp_refreshRepo(JNI
  */
 JNIEXPORT void JNICALL Java_fr_univsavoie_serveurbeta_trap_JZypp_setPathName
     (JNIEnv * env, jobject, jstring jSysRoot){
+     /*
+    * Get strings
+    */
+    const char *sysRoot = env->GetStringUTFChars(jSysRoot, 0);
+
+    /*
+    * Get environment
+    */
+    Trap &trap = Trap::getInstance();
+    trap.setPathName(sysRoot);
+
+    /*
+    * Release strings
+    */
+    env->ReleaseStringUTFChars(jSysRoot, sysRoot);
 
  }
