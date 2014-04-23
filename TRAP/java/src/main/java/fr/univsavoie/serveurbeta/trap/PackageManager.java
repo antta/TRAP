@@ -1,28 +1,23 @@
 package fr.univsavoie.serveurbeta.trap;
 
-/*
-    Fonctions à implémenter :
-    std::string getPackagesFromName(std::string name = "", std::string repoAlias = "");
-	void setPathName(std::string pathName = "/");
-	void addRepo(std::string repoAlias, std::string repoURL);
-	bool checkRepo(std::string repoURL);
-	void refreshRepo(std::string repoAlias);
+/**
+ * Created by patrick-edouard on 4/23/14.
  */
-public class JZypp extends PackageManager{
+public abstract class PackageManager {
 
     /**
      * Check if the given repo url is valid.
      * @param url to test
      * @return true if the repo is valid false otherwise
      */
-    native boolean isAValidRepository(String url);
+    abstract boolean isAValidRepository(String url);
 
     /**
      *
      * @param packageName
      * @return
      */
-    native String getPackage(String sysRoot, String packageName);
+    abstract String getPackage(String sysRoot, String packageName);
 
     /**
      * Add the given repository to the current repo.d
@@ -32,7 +27,7 @@ public class JZypp extends PackageManager{
      * @param url of a repository
      * @param alias name for the repo
      */
-    native void addRepository(String sysRoot, String url, String alias);
+    abstract void addRepository(String sysRoot, String url, String alias);
 
     /**
      * Add the given repository to the current repo.d
@@ -42,7 +37,7 @@ public class JZypp extends PackageManager{
      * @param url of a repository
      * @param alias name for the repo
      */
-    native void addRepository(String sysRoot, String url, String urlGPG, String alias);
+    abstract void addRepository(String sysRoot, String url, String urlGPG, String alias);
 
     /**
      *
@@ -50,7 +45,7 @@ public class JZypp extends PackageManager{
      * @param repoName
      * @return
      */
-    native String getPackagesFromName(String sysRoot, String packageName, String repoName);
+    abstract String getPackagesFromName(String sysRoot, String packageName, String repoName);
 
     /**
      *
@@ -59,18 +54,17 @@ public class JZypp extends PackageManager{
      * @param
      * @return
      */
-    native String getPackagesFromRepo(String sysRoot, String repoName);
+    abstract String getPackagesFromRepo(String sysRoot, String repoName);
 
     /**
      *
      * @param repoName
      */
-    native void refreshRepo(String sysRoot, String repoName);
+    abstract void refreshRepo(String sysRoot, String repoName);
 
     /**
      *
      * @param pathName
      */
-    native void setPathName(String pathName);
+    abstract void setPathName(String pathName);
 }
-

@@ -17,7 +17,7 @@ public class Trap {
 	
 	private static final String LIB_NAME = "trap-native-1.0-SNAPSHOT.so";
 	
-	private JZypp zypp;
+	private PackageManager zypp;
 
 	/**
 	 * Path to a system root folder
@@ -30,7 +30,8 @@ public class Trap {
      * @param sysRoot refer to your snapshot system sample : ~/myVM/snapshot-1-0-2/root witch contain a etc/zypp/repos.d repository
      */
 	public Trap(String sysRoot) {
-		this.zypp = new JZypp();
+		//this.zypp = new JZypp();
+        this.zypp = new PackageManagerImplementation();
 
 		InputStream resource = this.getClass().getClassLoader().getResourceAsStream(LIB_NAME);
 		
