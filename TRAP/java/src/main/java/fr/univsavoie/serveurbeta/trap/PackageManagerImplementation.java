@@ -18,6 +18,7 @@ public class PackageManagerImplementation extends PackageManager{
 
     private ArrayList<Element> packages;
     private Element root;
+
     public PackageManagerImplementation(){
 
     }
@@ -56,6 +57,12 @@ public class PackageManagerImplementation extends PackageManager{
                     this.downloadMetaData(url + e.getChild("location", ns).getAttribute("href").getValue());
                 }
             }
+
+            for(Element e : root.getChildren("package",ns)){
+                if(!e.getChild("arch",ns).getValue().equals("src"))
+                    packages.add(e.getChild("name",ns));
+            }
+
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JDOMException e) {
@@ -69,13 +76,6 @@ public class PackageManagerImplementation extends PackageManager{
         try {
             this.root = sxb.build(new GZIPInputStream(new URL(url).openStream())).getRootElement();
             Namespace ns = this.root.getNamespace();
-
-            Element packages =  this.root.getChild("package",ns);
-
-            for(Element e : root.getChildren("package",ns)){
-                if(!e.getChild("arch",ns).getValue().equals("src"))
-                System.out.println(e.getChild("name",ns).getValue());
-            }
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -111,7 +111,7 @@ public class PackageManagerImplementation extends PackageManager{
     @Override
     void addRepository(String sysRoot, String url, String alias) {
 
-        File repoFile = new File(sysRoot+"/etc/zypper/repo.d/"+"/"+alias+".repo");
+        File repoFile = new File(sysRoot+"/etc/zypp/repo.d/"+"/"+alias+".repo");
 
         try {
             FileWriter writer = new FileWriter(repoFile);
@@ -142,21 +142,32 @@ public class PackageManagerImplementation extends PackageManager{
 
     @Override
     String getPackagesFromRepo(String sysRoot, String repoName) {
-        return null;
+       return null;//new File(sysRoot+"/var/cache/zypp/raw/"+repoName+"/packages.txt").;
     }
 
     @Override
     void refreshRepo(String sysRoot, String repoName) {
+        //File repoFile = new File(sysRoot+"/etc/zypper/repo.d/"+"/"+alias+".repo");
+        File metadataFile = new File(sysRoot+"/var/cache/zypp/raw/"+repoName+"/packages.txt");
 
+        try {
+            FileWriter writer = new FileWriter(metadataFile);
+
+            for (Element e : packages)
+            {
+                writer.write(e.getValue()+";");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     void setPathName(String pathName) {
-
         File root = new File(pathName);
-        File repod = new File(root.getAbsolutePath()+"/etc/zypper/repo.d/");
-        System.out.println(root.getAbsolutePath() + "/etc/zypper/repo.d/");
+        File repod = new File(root.getAbsolutePath()+"/etc/zypp/repo.d/");
+        File metadataDirectory = new File(root.getAbsolutePath()+"/var/cache/zypp/raw/");
         repod.mkdirs();
-
+        metadataDirectory.mkdir();
     }
 }
