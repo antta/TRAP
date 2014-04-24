@@ -29,15 +29,15 @@ public class PackageManagerImplementation extends PackageManager{
 
         packageManager.setPathName(home+"/testTRAP/");
 
-
+        /*
         String repoGomez = "http://download.opensuse.org/repositories/home:/henri_gomez:/devops-incubator/openSUSE_13.1/";
         packageManager.addRepository(home+"/testTRAP/",repoGomez,"RepoGomez");
-
-        /*
+        */
 
         String repoOfficielDeTousLesInternets = "http://download.opensuse.org/distribution/13.1/repo/oss/suse/";
         System.out.println(packageManager.isAValidRepository(repoOfficielDeTousLesInternets + "yolo"));
 
+        System.out.println(packageManager.isAValidRepository(repoOfficielDeTousLesInternets));
         packageManager.addRepository(home+"/testTRAP/",repoOfficielDeTousLesInternets,"offiSuse");
         */
     }
@@ -91,12 +91,13 @@ public class PackageManagerImplementation extends PackageManager{
         //return new JZypp().isAValidRepository(url);
 
         try {
-            new URL(url+"/repodata/repomd.xml").openConnection();
+            HttpURLConnection httpUrlC =  ( HttpURLConnection ) new URL(url+"/repodata/repomd.xml").openConnection();
+            httpUrlC.setInstanceFollowRedirects(false);
+            httpUrlC.setRequestMethod("HEAD");
+            return (httpUrlC.getResponseCode() == HttpURLConnection.HTTP_OK);
         } catch (IOException e) {
             return false;
         }
-
-        return true;
     }
 
     @Override
