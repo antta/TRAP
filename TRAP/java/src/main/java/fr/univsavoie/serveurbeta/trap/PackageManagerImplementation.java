@@ -37,8 +37,11 @@ public class PackageManagerImplementation extends PackageManager{
         */
 
         String repoOfficielDeTousLesInternets = "http://download.opensuse.org/distribution/13.1/repo/oss/suse/";
+        System.out.println(packageManager.isAValidRepository(repoOfficielDeTousLesInternets + "yolo"));
+
         System.out.println(packageManager.isAValidRepository(repoOfficielDeTousLesInternets));
         packageManager.addRepository(home+"/testTRAP/",repoOfficielDeTousLesInternets,"offiSuse");
+
     }
 
     private void retrieveMetaData(String url){
