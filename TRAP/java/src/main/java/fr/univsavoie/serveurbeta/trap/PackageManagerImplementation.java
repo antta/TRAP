@@ -29,14 +29,17 @@ public class PackageManagerImplementation extends PackageManager{
 
         packageManager.setPathName(home+"/testTRAP/");
 
-        /*
+
         String repoGomez = "http://download.opensuse.org/repositories/home:/henri_gomez:/devops-incubator/openSUSE_13.1/";
         packageManager.addRepository(home+"/testTRAP/",repoGomez,"RepoGomez");
-        */
+
+        /*
 
         String repoOfficielDeTousLesInternets = "http://download.opensuse.org/distribution/13.1/repo/oss/suse/";
-        System.out.println(packageManager.isAValidRepository(repoOfficielDeTousLesInternets+"yolo"));
+        System.out.println(packageManager.isAValidRepository(repoOfficielDeTousLesInternets + "yolo"));
+
         packageManager.addRepository(home+"/testTRAP/",repoOfficielDeTousLesInternets,"offiSuse");
+        */
     }
 
     private void retrieveMetaData(String url){
