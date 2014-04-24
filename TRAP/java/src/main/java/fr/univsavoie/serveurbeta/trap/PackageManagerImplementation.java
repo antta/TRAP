@@ -6,6 +6,7 @@ import org.jdom2.Namespace;
 import org.jdom2.input.SAXBuilder;
 
 import java.io.*;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.zip.GZIPInputStream;
@@ -39,7 +40,7 @@ public class PackageManagerImplementation extends PackageManager{
 
         System.out.println(packageManager.isAValidRepository(repoOfficielDeTousLesInternets));
         packageManager.addRepository(home+"/testTRAP/",repoOfficielDeTousLesInternets,"offiSuse");
-        */
+
     }
 
     private void retrieveMetaData(String url){
