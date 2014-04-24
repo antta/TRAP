@@ -6,6 +6,7 @@ import org.jdom2.Namespace;
 import org.jdom2.input.SAXBuilder;
 
 import java.io.*;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.zip.GZIPInputStream;
@@ -35,7 +36,7 @@ public class PackageManagerImplementation extends PackageManager{
         */
 
         String repoOfficielDeTousLesInternets = "http://download.opensuse.org/distribution/13.1/repo/oss/suse/";
-        System.out.println(packageManager.isAValidRepository(repoOfficielDeTousLesInternets+"yolo"));
+        System.out.println(packageManager.isAValidRepository(repoOfficielDeTousLesInternets));
         packageManager.addRepository(home+"/testTRAP/",repoOfficielDeTousLesInternets,"offiSuse");
     }
 
@@ -88,12 +89,13 @@ public class PackageManagerImplementation extends PackageManager{
         //return new JZypp().isAValidRepository(url);
 
         try {
-            new URL(url+"/repodata/repomd.xml").openConnection();
+            HttpURLConnection httpUrlC =  ( HttpURLConnection ) new URL(url+"/repodata/repomd.xml").openConnection();
+            httpUrlC.setInstanceFollowRedirects(false);
+            httpUrlC.setRequestMethod("HEAD");
+            return (httpUrlC.getResponseCode() == HttpURLConnection.HTTP_OK);
         } catch (IOException e) {
             return false;
         }
-
-        return true;
     }
 
     @Override
