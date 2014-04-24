@@ -5,7 +5,7 @@ import org.jdom2.JDOMException;
 import org.jdom2.Namespace;
 import org.jdom2.input.SAXBuilder;
 
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.zip.GZIPInputStream;
@@ -25,12 +25,18 @@ public class PackageManagerImplementation extends PackageManager{
 
         PackageManager packageManager = new PackageManagerImplementation();
 
+        String home = (System.getProperty("user.home"));
+
+        packageManager.setPathName(home+"/testTRAP/");
+
         /*
         String repoGomez = "http://download.opensuse.org/repositories/home:/henri_gomez:/devops-incubator/openSUSE_13.1/";
-        packageManager.addRepository("/",repoGomez,"RepoGomez");
+        packageManager.addRepository(home+"/testTRAP/",repoGomez,"RepoGomez");
         */
+
         String repoOfficielDeTousLesInternets = "http://download.opensuse.org/distribution/13.1/repo/oss/suse/";
-        packageManager.addRepository("/",repoOfficielDeTousLesInternets,"offiSuse");
+        System.out.println(packageManager.isAValidRepository(repoOfficielDeTousLesInternets+"yolo"));
+        packageManager.addRepository(home+"/testTRAP/",repoOfficielDeTousLesInternets,"offiSuse");
     }
 
     private void retrieveMetaData(String url){
@@ -79,7 +85,15 @@ public class PackageManagerImplementation extends PackageManager{
 
     @Override
     boolean isAValidRepository(String url) {
-        return new JZypp().isAValidRepository(url);
+        //return new JZypp().isAValidRepository(url);
+
+        try {
+            new URL(url+"/repodata/repomd.xml").openConnection();
+        } catch (IOException e) {
+            return false;
+        }
+
+        return true;
     }
 
     @Override
@@ -94,6 +108,23 @@ public class PackageManagerImplementation extends PackageManager{
 
     @Override
     void addRepository(String sysRoot, String url, String alias) {
+
+        File repoFile = new File(sysRoot+"/etc/zypper/repo.d/"+"/"+alias+".repo");
+
+        try {
+            FileWriter writer = new FileWriter(repoFile);
+
+            writer.write("["+alias+"]\nname="+alias+"\nenabled=1\nautorefresh=1\nbaseurl="+url+"\ntype=rpm-md");
+
+            writer.close();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
         this.retrieveMetaData(url);
     }
 
@@ -119,6 +150,11 @@ public class PackageManagerImplementation extends PackageManager{
 
     @Override
     void setPathName(String pathName) {
+
+        File root = new File(pathName);
+        File repod = new File(root.getAbsolutePath()+"/etc/zypper/repo.d/");
+        System.out.println(root.getAbsolutePath() + "/etc/zypper/repo.d/");
+        repod.mkdirs();
 
     }
 }
