@@ -17,6 +17,7 @@ import java.util.zip.GZIPInputStream;
 public class PackageManagerImplementation extends PackageManager{
 
     private ArrayList<Element> packages;
+    private String revision;
     private Element root;
 
     public PackageManagerImplementation(){
@@ -41,6 +42,7 @@ public class PackageManagerImplementation extends PackageManager{
 
         System.out.println(packageManager.isAValidRepository(repoOfficielDeTousLesInternets));
         packageManager.addRepository(home+"/testTRAP/",repoOfficielDeTousLesInternets,"offiSuse");
+        packageManager.refreshRepo(home+"/testTRAP/","offiSuse");
 
     }
 
@@ -54,6 +56,8 @@ public class PackageManagerImplementation extends PackageManager{
             Element rootRepomd = sxb.build(new URL(urlRepomd).openStream()).getRootElement();
             System.out.println(rootRepomd.getNamespace());
             Namespace ns = rootRepomd.getNamespace();
+
+            this.revision = rootRepomd.getChild("revison",ns).getValue();
 
             for(Element e : rootRepomd.getChildren("data", ns)){
                 if(e.getAttribute("type").getValue().equals("primary")){
@@ -128,9 +132,6 @@ public class PackageManagerImplementation extends PackageManager{
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
-        this.retrieveMetaData(url);
     }
 
     @Override
@@ -151,11 +152,18 @@ public class PackageManagerImplementation extends PackageManager{
     @Override
     void refreshRepo(String sysRoot, String repoName) {
         //File repoFile = new File(sysRoot+"/etc/zypper/repo.d/"+"/"+alias+".repo");
+
+        //TODO : retrouver l'URL dans le fichier de métadonnées
+
+        this.retrieveMetaData(url);
+
         File metadataFile = new File(sysRoot+"/var/cache/zypp/raw/"+repoName+"/packages.txt");
+
+        //TODO : vérifier si le numéro de révision est le même entre le répo et le loca pour voir s'il y a besoins d'un refresh
 
         try {
             FileWriter writer = new FileWriter(metadataFile);
-
+            writer.write("revision:"+revision+"\n");
             for (Element e : packages)
             {
                 writer.write(e.getValue()+";");
