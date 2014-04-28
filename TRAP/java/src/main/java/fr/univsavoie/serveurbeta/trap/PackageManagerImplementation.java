@@ -21,7 +21,7 @@ public class PackageManagerImplementation extends PackageManager{
     private Element root;
 
     public PackageManagerImplementation(){
-
+        packages=new ArrayList<Element>();
     }
 
     public static void main(String[] args){
@@ -38,16 +38,15 @@ public class PackageManagerImplementation extends PackageManager{
         */
 
         String repoOfficielDeTousLesInternets = "http://download.opensuse.org/distribution/13.1/repo/oss/suse/";
-        System.out.println(packageManager.isAValidRepository(repoOfficielDeTousLesInternets + "yolo"));
+        System.out.println("[TEST]Is a valid repository ? "+packageManager.isAValidRepository(repoOfficielDeTousLesInternets + "yolo"));
 
-        System.out.println(packageManager.isAValidRepository(repoOfficielDeTousLesInternets));
-        packageManager.addRepository(home+"/testTRAP/",repoOfficielDeTousLesInternets,"offiSuse");
-        packageManager.refreshRepo(home+"/testTRAP/","offiSuse");
+        System.out.println("[TEST]Is a valid repository ? "+packageManager.isAValidRepository(repoOfficielDeTousLesInternets));
+        packageManager.addRepository(home + "/testTRAP/", repoOfficielDeTousLesInternets, "offiSuse");
+        packageManager.refreshRepo(home + "/testTRAP/", "offiSuse");
 
     }
 
     private void retrieveMetaData(String url){
-
 
         SAXBuilder sxb = new SAXBuilder();
         String urlRepomd = url+"repodata/repomd.xml";
@@ -57,7 +56,11 @@ public class PackageManagerImplementation extends PackageManager{
             System.out.println(rootRepomd.getNamespace());
             Namespace ns = rootRepomd.getNamespace();
 
-            this.revision = rootRepomd.getChild("revison",ns).getValue();
+            Element t = rootRepomd.getChild("revison",ns);
+
+            if(t!=null){
+                this.revision = rootRepomd.getChild("revison",ns).getValue();
+            }
 
             for(Element e : rootRepomd.getChildren("data", ns)){
                 if(e.getAttribute("type").getValue().equals("primary")){
@@ -66,8 +69,9 @@ public class PackageManagerImplementation extends PackageManager{
             }
 
             for(Element e : root.getChildren("package",ns)){
-                if(!e.getChild("arch",ns).getValue().equals("src"))
-                    packages.add(e.getChild("name",ns));
+                if(!e.getChild("arch",ns).getValue().equals("src")) {
+                    packages.add(e.getChild("name", ns));
+                }
             }
 
         } catch (IOException e) {
@@ -83,7 +87,6 @@ public class PackageManagerImplementation extends PackageManager{
         try {
             this.root = sxb.build(new GZIPInputStream(new URL(url).openStream())).getRootElement();
             Namespace ns = this.root.getNamespace();
-
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JDOMException e) {
@@ -151,13 +154,45 @@ public class PackageManagerImplementation extends PackageManager{
 
     @Override
     void refreshRepo(String sysRoot, String repoName) {
-        //File repoFile = new File(sysRoot+"/etc/zypper/repo.d/"+"/"+alias+".repo");
+        File repoFile = new File(sysRoot+"/etc/zypp/repo.d/"+"/"+repoName+".repo");
+        String url = "";
 
-        //TODO : retrouver l'URL dans le fichier de métadonnées
+        if(!repoFile.exists()){
+            System.err.println("[ERROR]The specified repo file doesn't exists");
+            return;
+        }
+
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(repoFile));
+
+            String line = reader.readLine();
+
+            while(line!=null){
+                if(line.startsWith("baseurl")){
+                    url = line.substring("baseurl=".length());
+                }
+
+                line = reader.readLine();
+            }
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         this.retrieveMetaData(url);
 
         File metadataFile = new File(sysRoot+"/var/cache/zypp/raw/"+repoName+"/packages.txt");
+
+        if(!metadataFile.exists()){
+            try {
+                new File(sysRoot+"/var/cache/zypp/raw/"+repoName).mkdirs();
+                metadataFile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
         //TODO : vérifier si le numéro de révision est le même entre le répo et le loca pour voir s'il y a besoins d'un refresh
 
@@ -170,6 +205,8 @@ public class PackageManagerImplementation extends PackageManager{
             }
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            System.out.println("test finnaly !");
         }
     }
 
