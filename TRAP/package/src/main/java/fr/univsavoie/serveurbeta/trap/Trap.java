@@ -59,24 +59,22 @@ public class Trap {
     public Trap(String sysRoot, boolean nativeMode) {
         if(nativeMode){
             this.zypp = new JZypp();
+            File tempFile;
+
+            try {
+                InputStream resource = this.getClass().getClassLoader().getResourceAsStream(LIB_NAME);
+                tempFile = File.createTempFile("lib", ".so");
+                tempFile.deleteOnExit();
+                FileOutputStream out = new FileOutputStream(tempFile);
+                IOUtils.copy(resource, out);
+                System.load(tempFile.getAbsolutePath());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         else{
             this.zypp = new PackageManagerImplementation();
-        }
-
-        InputStream resource = this.getClass().getClassLoader().getResourceAsStream(LIB_NAME);
-
-        File tempFile;
-
-        try {
-            tempFile = File.createTempFile("lib", "so");
-            tempFile.deleteOnExit();
-            FileOutputStream out = new FileOutputStream(tempFile);
-            IOUtils.copy(resource, out);
-            System.load(tempFile.getAbsolutePath());
-        } catch (IOException e) {
-            e.printStackTrace();
         }
 
         this.sysRoot = sysRoot;
