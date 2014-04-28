@@ -30,7 +30,7 @@ public class PackageManagerImplementation extends PackageManager{
 
         PackageManager packageManager = new PackageManagerImplementation();
 
-        String unPaquet = "kiwi";
+        String unPaquet = "kernel";
         String home = (System.getProperty("user.home"));
 
         packageManager.setPathName(home+"/testTRAP/");
@@ -47,7 +47,7 @@ public class PackageManagerImplementation extends PackageManager{
         packageManager.addRepository(home + "/testTRAP/", repoOfficielDeTousLesInternets, "offiSuse");
         packageManager.refreshRepo(home + "/testTRAP/", "offiSuse");
 
-        System.out.println("Recherche de "+unPaquet+" : "+packageManager.getPackagesFromName(home+"/testTrap/", unPaquet, "offiSuse"));
+        System.out.println("Recherche de "+unPaquet+" : "+packageManager.getPackagesFromName(home+"/testTRAP/", unPaquet, "offiSuse"));
 
     }
 
@@ -104,7 +104,6 @@ public class PackageManagerImplementation extends PackageManager{
 
     @Override
     boolean isAValidRepository(String url) {
-        //return new JZypp().isAValidRepository(url);
 
         try {
             HttpURLConnection httpUrlC =  ( HttpURLConnection ) new URL(url+"/repodata/repomd.xml").openConnection();
@@ -119,8 +118,8 @@ public class PackageManagerImplementation extends PackageManager{
     @Override
     String getPackage(String sysRoot, String packageName) {
         try{
-            throw new UnimplemenedMethodeException();
-        }catch(UnimplemenedMethodeException e){
+            throw new UnimplementedMethodException();
+        }catch(UnimplementedMethodException e){
             e.printStackTrace();
         }
         return null;
@@ -157,16 +156,16 @@ public class PackageManagerImplementation extends PackageManager{
 
         for(String p : allPackages.split(",")){
             if(p.contains(packageName)){
-                correspondingPackage+="p";
+                correspondingPackage+=p+",";
             }
         }
-        return correspondingPackage;
+        return correspondingPackage.substring(0,correspondingPackage.length()-1);
     }
 
     @Override
     String getPackagesFromRepo(String sysRoot, String repoName) {
-        File repoFile = new File(sysRoot+"/var/cache/zypp/raw/"+"/"+repoName);
-
+        File repoFile = new File(sysRoot+"var/cache/zypp/raw/"+repoName+"/packages.txt");
+        System.out.println(sysRoot+"/var/cache/zypp/raw/"+repoName+"/packages.txt");
         if(!repoFile.exists()){
             System.err.println("[ERROR]The specified repo file doesn't exists");
             return "";
