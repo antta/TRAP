@@ -11,6 +11,7 @@
 #include <zypp/Capability.h>
 #include <zypp/sat/Solvable.h>
 #include <zypp/Url.h>
+#include <zypp/KeyRing.h>
 
 #include <exception>
 
@@ -53,6 +54,10 @@ std::string Trap::getPackagesFromName(std::string name, std::string repoAlias)
 	{
 		
 		zypp::ZYpp::Ptr zyppPtr = zypp::ZYppFactory::instance().getZYpp();
+		
+		zypp::Pathname sysRoot( m_pathName );
+		zyppPtr->initializeTarget( sysRoot, false );
+		zyppPtr->target()->load();
 
 		zypp::PoolQuery query;
 
@@ -70,16 +75,15 @@ std::string Trap::getPackagesFromName(std::string name, std::string repoAlias)
 			query.addRepo(repoAlias);
 		}
 
-		zypp::Pathname sysRoot( m_pathName );
-		
-		
-			zyppPtr->initializeTarget( sysRoot, false );
-			zyppPtr->target()->load();
-			zyppPtr->resolver()->resolvePool();
+		zypp::ResPool pool( ResPool::instance() );
+		zyppPtr->resolver()->resolvePool();
 		
 			
 		zypp::invokeOnEach(query.poolItemBegin(), query.poolItemEnd(), m_result);
-		saveQueryResult();
+		saveQueryResult();//save building string in the result string
+		
+		if(m_resultString.size() > 0)
+			m_resultString.substr(0, npos-1)
 	
 	}
 	catch (const std::exception &e)
@@ -158,28 +162,29 @@ bool Trap::addRepo(std::string repoAlias, std::string repoURL, std::string gpgCh
 	{
 		zypp::repo::ServiceType stype = m_repoManager->probeService(repoURL);
 		
-		if (stype != zypp::repo::ServiceType::NONE)
+		if (stype != zypp::repo::ServiceType::NONE) //if this is a service
 		{
+			//Setting service info
 			zypp::ServiceInfo service;
 			service.setType(stype);
 			service.setAlias(repoAlias);
 			service.setName(repoAlias);
 			service.setUrl(repoURL);
 			service.setEnabled(true);
+			//Adding service or modifiy it if it already exists
 			if(m_repoManager->hasService(repoAlias))
 				m_repoManager->modifyService(repoAlias, service);
 			else
 				m_repoManager->addService(service);
-				
-			initRepoManager();
-			m_repoManager->refreshService(service);
+			
+			// Refresh repo manager and reinitialize repoManager
 			initRepoManager();
 		}
-		else if (checkRepo(repoURL))
+		else if (checkRepo(repoURL)) //If this is a repository
 		{
+			//Setting repository info
 			zypp::RepoInfo repo;
-			repo.setBaseUrl(repoURL+ "/repodata");
-			//repo.addBaseUrl(repoURL+ "/repodata");
+			repo.setBaseUrl(repoURL);
 			repo.setEnabled(true);
 			repo.setAutorefresh(false);
 			if(gpgCheckURL != "")
@@ -191,11 +196,14 @@ bool Trap::addRepo(std::string repoAlias, std::string repoURL, std::string gpgCh
 			repo.setAlias(repoAlias);
 			repo.setName(repoAlias);
 			repo.setProbedType(m_repoManager->probe(repoURL));
-			repo.setPath(zypp::Pathname(m_pathName));
+			
+			//add repository or modify it if already exists
 			if(m_repoManager->hasRepo(repoAlias))
 				m_repoManager->modifyRepository(repo);
 			else
 				m_repoManager->addRepository(repo);
+				
+			//Reinitialize repoManager
 			initRepoManager();
 		}
 	}
@@ -204,8 +212,6 @@ bool Trap::addRepo(std::string repoAlias, std::string repoURL, std::string gpgCh
 		std::cerr << "[ERROR] Exception caught in Trapp::addRepo : "<< e.what() << std::endl;
 		return false;
 	}
-	
-	initRepoManager();
 	
 	return true;
 }
@@ -227,12 +233,15 @@ bool Trap::checkRepo(std::string repoURL)
 
 bool Trap::refreshRepo(std::string repoAlias)
 {
+	//TODO : do the gpg Check. currently : accept automaticaly
+	zypp::KeyRing::setDefaultAccept(zypp::KeyRing::ACCEPT_UNSIGNED_FILE | zypp::KeyRing::TRUST_AND_IMPORT_KEY);
 	bool refreshSuccessfull = false;
 	try 
 	{
 		zypp::Pathname path( m_pathName );
 		zypp::ZYppFactory::instance().getZYpp()->initializeTarget( path, false );
 		
+		//Test if this is a service
 		if(m_repoManager->hasService(repoAlias))
 		{
 			zypp::ServiceInfo service = m_repoManager->getService(repoAlias);
@@ -241,8 +250,6 @@ bool Trap::refreshRepo(std::string repoAlias)
 		
 		initRepoManager();
 		zypp::RepoInfo repo = m_repoManager->getRepositoryInfo(repoAlias);
-	
-		std::cout << "[INFO] Status of the metadata : " << m_repoManager->metadataStatus(repo) << std::endl;
 		
 		for(zypp::RepoInfo::urls_const_iterator it = repo.baseUrlsBegin(); it != repo.baseUrlsEnd(); ++it)
 		{
@@ -252,7 +259,9 @@ bool Trap::refreshRepo(std::string repoAlias)
 				if(m_repoManager->checkIfToRefreshMetadata (repo, *it) == zypp::RepoManager::REFRESH_NEEDED)
 				{
 					m_repoManager->refreshMetadata(repo, zypp::RepoManager::RefreshIfNeeded);
+					m_repoManager->cleanCache(repo);
 					m_repoManager->buildCache(repo, zypp::RepoManager::BuildIfNeeded);
+					m_repoManager.loadFromCache( repo );
 					initRepoManager();
 					refreshSuccessfull = true;
 					break;
@@ -281,6 +290,7 @@ std::string Trap::getAllPackages(std::string repoAlias)
 void Trap::clean()
 {
 	for(zypp::RepoManager::RepoConstIterator it = m_repoManager->repoBegin(); it !=  m_repoManager->repoEnd(); it = m_repoManager->repoBegin())
+		m_repoManager->cleanCache(*it)
 		m_repoManager->removeRepository(*it);
 	initRepoManager();
 	for(zypp::RepoManager::ServiceConstIterator it = m_repoManager->serviceBegin(); it !=  m_repoManager->serviceEnd(); it = m_repoManager->serviceBegin())
