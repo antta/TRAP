@@ -75,7 +75,7 @@ std::string Trap::getPackagesFromName(std::string name, std::string repoAlias)
 			query.addRepo(repoAlias);
 		}
 
-		zypp::ResPool pool( ResPool::instance() );
+		//zypp::ResPool pool( ResPool::instance() );
 		zyppPtr->resolver()->resolvePool();
 		
 			
@@ -83,7 +83,7 @@ std::string Trap::getPackagesFromName(std::string name, std::string repoAlias)
 		saveQueryResult();//save building string in the result string
 		
 		if(m_resultString.size() > 0)
-			m_resultString.substr(0, npos-1)
+			m_resultString.substr(0, m_resultString.size()-1);
 	
 	}
 	catch (const std::exception &e)
@@ -261,7 +261,6 @@ bool Trap::refreshRepo(std::string repoAlias)
 					m_repoManager->refreshMetadata(repo, zypp::RepoManager::RefreshIfNeeded);
 					m_repoManager->cleanCache(repo);
 					m_repoManager->buildCache(repo, zypp::RepoManager::BuildIfNeeded);
-					m_repoManager.loadFromCache( repo );
 					initRepoManager();
 					refreshSuccessfull = true;
 					break;
@@ -290,8 +289,10 @@ std::string Trap::getAllPackages(std::string repoAlias)
 void Trap::clean()
 {
 	for(zypp::RepoManager::RepoConstIterator it = m_repoManager->repoBegin(); it !=  m_repoManager->repoEnd(); it = m_repoManager->repoBegin())
-		m_repoManager->cleanCache(*it)
+	{
+		m_repoManager->cleanCache(*it);
 		m_repoManager->removeRepository(*it);
+	}
 	initRepoManager();
 	for(zypp::RepoManager::ServiceConstIterator it = m_repoManager->serviceBegin(); it !=  m_repoManager->serviceEnd(); it = m_repoManager->serviceBegin())
 		m_repoManager->removeService(*it);
