@@ -15,7 +15,7 @@ import java.util.ArrayList;
  */
 public class Trap {
 	
-	private static final String LIB_NAME = "trap-native-1.0-SNAPSHOT.so";
+	private static final String LIB_NAME = "trap-native-1.1-SNAPSHOT.so";
 	
 	private PackageManager zypp;
 
