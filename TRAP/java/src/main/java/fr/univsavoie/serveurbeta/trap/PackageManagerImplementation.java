@@ -5,7 +5,8 @@ import org.jdom2.JDOMException;
 import org.jdom2.Namespace;
 import org.jdom2.input.SAXBuilder;
 
-import java.io.IOException;
+import java.io.*;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.zip.GZIPInputStream;
@@ -16,7 +17,9 @@ import java.util.zip.GZIPInputStream;
 public class PackageManagerImplementation extends PackageManager{
 
     private ArrayList<Element> packages;
+    private String revision;
     private Element root;
+
     public PackageManagerImplementation(){
 
     }
@@ -25,12 +28,22 @@ public class PackageManagerImplementation extends PackageManager{
 
         PackageManager packageManager = new PackageManagerImplementation();
 
+        String home = (System.getProperty("user.home"));
+
+        packageManager.setPathName(home+"/testTRAP/");
+
         /*
         String repoGomez = "http://download.opensuse.org/repositories/home:/henri_gomez:/devops-incubator/openSUSE_13.1/";
-        packageManager.addRepository("/",repoGomez,"RepoGomez");
+        packageManager.addRepository(home+"/testTRAP/",repoGomez,"RepoGomez");
         */
+
         String repoOfficielDeTousLesInternets = "http://download.opensuse.org/distribution/13.1/repo/oss/suse/";
-        packageManager.addRepository("/",repoOfficielDeTousLesInternets,"offiSuse");
+        System.out.println(packageManager.isAValidRepository(repoOfficielDeTousLesInternets + "yolo"));
+
+        System.out.println(packageManager.isAValidRepository(repoOfficielDeTousLesInternets));
+        packageManager.addRepository(home+"/testTRAP/",repoOfficielDeTousLesInternets,"offiSuse");
+        packageManager.refreshRepo(home+"/testTRAP/","offiSuse");
+
     }
 
     private void retrieveMetaData(String url){
@@ -44,11 +57,19 @@ public class PackageManagerImplementation extends PackageManager{
             System.out.println(rootRepomd.getNamespace());
             Namespace ns = rootRepomd.getNamespace();
 
+            this.revision = rootRepomd.getChild("revison",ns).getValue();
+
             for(Element e : rootRepomd.getChildren("data", ns)){
                 if(e.getAttribute("type").getValue().equals("primary")){
                     this.downloadMetaData(url + e.getChild("location", ns).getAttribute("href").getValue());
                 }
             }
+
+            for(Element e : root.getChildren("package",ns)){
+                if(!e.getChild("arch",ns).getValue().equals("src"))
+                    packages.add(e.getChild("name",ns));
+            }
+
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JDOMException e) {
@@ -63,13 +84,6 @@ public class PackageManagerImplementation extends PackageManager{
             this.root = sxb.build(new GZIPInputStream(new URL(url).openStream())).getRootElement();
             Namespace ns = this.root.getNamespace();
 
-            Element packages =  this.root.getChild("package",ns);
-
-            for(Element e : root.getChildren("package",ns)){
-                if(!e.getChild("arch",ns).getValue().equals("src"))
-                System.out.println(e.getChild("name",ns).getValue());
-            }
-
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JDOMException e) {
@@ -79,7 +93,16 @@ public class PackageManagerImplementation extends PackageManager{
 
     @Override
     boolean isAValidRepository(String url) {
-        return new JZypp().isAValidRepository(url);
+        //return new JZypp().isAValidRepository(url);
+
+        try {
+            HttpURLConnection httpUrlC =  ( HttpURLConnection ) new URL(url+"/repodata/repomd.xml").openConnection();
+            httpUrlC.setInstanceFollowRedirects(false);
+            httpUrlC.setRequestMethod("HEAD");
+            return (httpUrlC.getResponseCode() == HttpURLConnection.HTTP_OK);
+        } catch (IOException e) {
+            return false;
+        }
     }
 
     @Override
@@ -94,7 +117,21 @@ public class PackageManagerImplementation extends PackageManager{
 
     @Override
     void addRepository(String sysRoot, String url, String alias) {
-        this.retrieveMetaData(url);
+
+        File repoFile = new File(sysRoot+"/etc/zypp/repo.d/"+"/"+alias+".repo");
+
+        try {
+            FileWriter writer = new FileWriter(repoFile);
+
+            writer.write("["+alias+"]\nname="+alias+"\nenabled=1\nautorefresh=1\nbaseurl="+url+"\ntype=rpm-md");
+
+            writer.close();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -109,16 +146,39 @@ public class PackageManagerImplementation extends PackageManager{
 
     @Override
     String getPackagesFromRepo(String sysRoot, String repoName) {
-        return null;
+       return null;//new File(sysRoot+"/var/cache/zypp/raw/"+repoName+"/packages.txt").;
     }
 
     @Override
     void refreshRepo(String sysRoot, String repoName) {
+        //File repoFile = new File(sysRoot+"/etc/zypper/repo.d/"+"/"+alias+".repo");
 
+        //TODO : retrouver l'URL dans le fichier de métadonnées
+
+        this.retrieveMetaData(url);
+
+        File metadataFile = new File(sysRoot+"/var/cache/zypp/raw/"+repoName+"/packages.txt");
+
+        //TODO : vérifier si le numéro de révision est le même entre le répo et le loca pour voir s'il y a besoins d'un refresh
+
+        try {
+            FileWriter writer = new FileWriter(metadataFile);
+            writer.write("revision:"+revision+"\n");
+            for (Element e : packages)
+            {
+                writer.write(e.getValue()+";");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     void setPathName(String pathName) {
-
+        File root = new File(pathName);
+        File repod = new File(root.getAbsolutePath()+"/etc/zypp/repo.d/");
+        File metadataDirectory = new File(root.getAbsolutePath()+"/var/cache/zypp/raw/");
+        repod.mkdirs();
+        metadataDirectory.mkdir();
     }
 }

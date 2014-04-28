@@ -51,6 +51,39 @@ public class Trap {
 	}
 
     /**
+     * New instance for Trap.
+     * Due to cpp issues, it is highly recommended to use only one instance of Trap in your whole program.
+     * @param sysRoot refer to your snapshot system sample : ~/myVM/snapshot-1-0-2/root witch contain a etc/zypp/repos.d repository
+     * @param nativeMode switch between JZypp (witch call native cpp files) and our own java way (witch download the xml metada for the repos)
+     */
+    public Trap(String sysRoot, boolean nativeMode) {
+        if(nativeMode){
+            this.zypp = new JZypp();
+        }
+
+        else{
+            this.zypp = new PackageManagerImplementation();
+        }
+
+        InputStream resource = this.getClass().getClassLoader().getResourceAsStream(LIB_NAME);
+
+        File tempFile;
+
+        try {
+            tempFile = File.createTempFile("lib", "so");
+            tempFile.deleteOnExit();
+            FileOutputStream out = new FileOutputStream(tempFile);
+            IOUtils.copy(resource, out);
+            System.load(tempFile.getAbsolutePath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        this.sysRoot = sysRoot;
+        this.initSystem();
+    }
+
+    /**
      *
      */
     private void initSystem(){
