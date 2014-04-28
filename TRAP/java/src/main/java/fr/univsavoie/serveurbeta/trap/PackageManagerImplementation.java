@@ -19,6 +19,8 @@ public class PackageManagerImplementation extends PackageManager{
     private ArrayList<Element> packages;
     private String revision;
     private Element root;
+    private Namespace ns;
+    private String urlPackageMetaData;
 
     public PackageManagerImplementation(){
         packages=new ArrayList<Element>();
@@ -28,6 +30,7 @@ public class PackageManagerImplementation extends PackageManager{
 
         PackageManager packageManager = new PackageManagerImplementation();
 
+        String unPaquet = "kiwi";
         String home = (System.getProperty("user.home"));
 
         packageManager.setPathName(home+"/testTRAP/");
@@ -44,6 +47,8 @@ public class PackageManagerImplementation extends PackageManager{
         packageManager.addRepository(home + "/testTRAP/", repoOfficielDeTousLesInternets, "offiSuse");
         packageManager.refreshRepo(home + "/testTRAP/", "offiSuse");
 
+        System.out.println("Recherche de "+unPaquet+" : "+packageManager.getPackagesFromName(home+"/testTrap/", unPaquet, "offiSuse"));
+
     }
 
     private void retrieveMetaData(String url){
@@ -53,24 +58,20 @@ public class PackageManagerImplementation extends PackageManager{
 
         try {
             Element rootRepomd = sxb.build(new URL(urlRepomd).openStream()).getRootElement();
-            System.out.println(rootRepomd.getNamespace());
-            Namespace ns = rootRepomd.getNamespace();
+            ns = rootRepomd.getNamespace();
 
-            Element t = rootRepomd.getChild("revison",ns);
+            Element t = rootRepomd.getChild("revision",ns);
 
             if(t!=null){
-                this.revision = rootRepomd.getChild("revison",ns).getValue();
+                this.revision = rootRepomd.getChild("revision",ns).getValue();
+            }else{
+                this.revision="undefined";
             }
 
             for(Element e : rootRepomd.getChildren("data", ns)){
                 if(e.getAttribute("type").getValue().equals("primary")){
-                    this.downloadMetaData(url + e.getChild("location", ns).getAttribute("href").getValue());
-                }
-            }
-
-            for(Element e : root.getChildren("package",ns)){
-                if(!e.getChild("arch",ns).getValue().equals("src")) {
-                    packages.add(e.getChild("name", ns));
+                    urlPackageMetaData = url + e.getChild("location", ns).getAttribute("href").getValue();
+                    break;
                 }
             }
 
@@ -81,12 +82,19 @@ public class PackageManagerImplementation extends PackageManager{
         }
     }
 
+    private void getAllPackage() {
+        for(Element e : root.getChildren("package",ns)){
+            if(!e.getChild("arch",ns).getValue().equals("src")) {
+                packages.add(e.getChild("name", ns));
+            }
+        }
+    }
+
     private void downloadMetaData(String url){
-        System.out.println("On veut dl tout les internets pour : "+url);
         SAXBuilder sxb = new SAXBuilder();
         try {
             this.root = sxb.build(new GZIPInputStream(new URL(url).openStream())).getRootElement();
-            Namespace ns = this.root.getNamespace();
+            ns = this.root.getNamespace();
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JDOMException e) {
@@ -139,23 +147,51 @@ public class PackageManagerImplementation extends PackageManager{
 
     @Override
     void addRepository(String sysRoot, String url, String urlGPG, String alias) {
-
+        this.addRepository(sysRoot, url, alias);
     }
 
     @Override
     String getPackagesFromName(String sysRoot, String packageName, String repoName) {
-        return null;
+        String allPackages = this.getPackagesFromRepo(sysRoot, repoName);
+        String correspondingPackage = "";
+
+        for(String p : allPackages.split(",")){
+            if(p.contains(packageName)){
+                correspondingPackage+="p";
+            }
+        }
+        return correspondingPackage;
     }
 
     @Override
     String getPackagesFromRepo(String sysRoot, String repoName) {
-       return null;//new File(sysRoot+"/var/cache/zypp/raw/"+repoName+"/packages.txt").;
+        File repoFile = new File(sysRoot+"/var/cache/zypp/raw/"+"/"+repoName);
+
+        if(!repoFile.exists()){
+            System.err.println("[ERROR]The specified repo file doesn't exists");
+            return "";
+        }
+
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(repoFile));
+
+            reader.readLine();
+            return reader.readLine();
+
+        } catch (FileNotFoundException e) {
+            System.err.println("[ERROR]The specified repo file doesn't exists");
+            return "";
+        } catch (IOException e) {
+            System.err.println("[ERROR]Cannot open the specified file");
+            return "";
+        }
     }
 
     @Override
     void refreshRepo(String sysRoot, String repoName) {
         File repoFile = new File(sysRoot+"/etc/zypp/repo.d/"+"/"+repoName+".repo");
         String url = "";
+        String repoRevision = "";
 
         if(!repoFile.exists()){
             System.err.println("[ERROR]The specified repo file doesn't exists");
@@ -181,32 +217,59 @@ public class PackageManagerImplementation extends PackageManager{
             e.printStackTrace();
         }
 
-        this.retrieveMetaData(url);
-
         File metadataFile = new File(sysRoot+"/var/cache/zypp/raw/"+repoName+"/packages.txt");
 
         if(!metadataFile.exists()){
             try {
                 new File(sysRoot+"/var/cache/zypp/raw/"+repoName).mkdirs();
                 metadataFile.createNewFile();
+                repoRevision = "undefined";
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }else {
+            BufferedReader reader = null;
+            try {
+                reader = new BufferedReader(new FileReader(metadataFile));
+
+                repoRevision = reader.readLine();
+
+                if(repoRevision==null){
+                    repoRevision="undefined";
+                }
+
+                System.out.println("");
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
 
-        //TODO : vérifier si le numéro de révision est le même entre le répo et le loca pour voir s'il y a besoins d'un refresh
+        this.retrieveMetaData(url);
 
+        if(!repoRevision.equals(revision)){
+
+            this.downloadMetaData(this.urlPackageMetaData);
+
+            this.getAllPackage();
+
+            this.storeRefreshedData(metadataFile);
+        }
+    }
+
+    private void storeRefreshedData(File metadaFile){
         try {
-            FileWriter writer = new FileWriter(metadataFile);
-            writer.write("revision:"+revision+"\n");
+            FileWriter writer = new FileWriter(metadaFile);
+            writer.write(revision+"\n");
             for (Element e : packages)
             {
-                writer.write(e.getValue()+";");
+                writer.write(e.getValue()+",");
             }
+            writer.write("\n");
+            writer.close();
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            System.out.println("test finnaly !");
         }
     }
 

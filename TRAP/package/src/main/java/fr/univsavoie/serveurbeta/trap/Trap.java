@@ -63,7 +63,7 @@ public class Trap {
 
             try {
                 InputStream resource = this.getClass().getClassLoader().getResourceAsStream(LIB_NAME);
-                tempFile = File.createTempFile("lib", ".so");
+                tempFile = File.createTempFile("lib", "so");
                 tempFile.deleteOnExit();
                 FileOutputStream out = new FileOutputStream(tempFile);
                 IOUtils.copy(resource, out);
@@ -110,7 +110,7 @@ public class Trap {
      * @return
      */
     public boolean isAValidRepository(String repoURL) {
-        return new JZypp().isAValidRepository(repoURL);
+        return zypp.isAValidRepository(repoURL);
     }
 
     /**
