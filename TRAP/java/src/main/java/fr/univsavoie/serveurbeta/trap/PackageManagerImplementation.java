@@ -280,4 +280,38 @@ public class PackageManagerImplementation extends PackageManager{
         repod.mkdirs();
         metadataDirectory.mkdir();
     }
+
+    @Override
+    boolean localRepositoryExists(String sysRoot, String alias) {
+        return new File(new File(sysRoot).getAbsolutePath()+"/etc/zypp/repo.d/"+alias+".repo").exists();
+    }
+
+    @Override
+    boolean hasRepositoryFor(String sysRoot, String url) {
+        File root = new File(sysRoot);
+        File repod = new File(root.getAbsolutePath()+"/etc/zypp/repo.d/");
+        for(File repoFile: repod.listFiles()){
+
+            try {
+                BufferedReader reader = new BufferedReader(new FileReader(repoFile));
+
+                String line = reader.readLine();
+
+                while(line!=null){
+                    if(line.startsWith("baseurl")){
+                        if(url.equals(line.substring("baseurl=".length()))){
+                            return true;
+                        }
+                    }
+                    line = reader.readLine();
+                }
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
 }

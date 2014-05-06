@@ -157,4 +157,22 @@ public class Trap {
     public String getPackagesIn(String repoAlias){
         return this.zypp.getPackagesFromRepo(this.sysRoot, repoAlias);
     }
+
+    /**
+     * check if sysRoot/etc/zypp/repo.d/{alias} exists
+     * @param alias
+     * @return
+     */
+    public boolean localRepositoryExists(String alias){
+        return this.zypp.localRepositoryExists(alias);
+    }
+
+    /**
+     * Check if a local repository (in sysRoot/etc/zypp/repo.d/*) exists with the given url
+     * @param url
+     * @return
+     */
+    public boolean hasRepositoryFor(String url){
+        return this.zypp.hasRepositoryFor(url);
+    }
 }

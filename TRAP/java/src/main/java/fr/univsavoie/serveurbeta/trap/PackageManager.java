@@ -67,4 +67,8 @@ public abstract class PackageManager {
      * @param pathName
      */
     abstract void setPathName(String pathName);
+
+    abstract boolean localRepositoryExists(String sysRoot, String alias);
+
+    abstract boolean hasRepositoryFor(String sysRoot, String url);
 }
