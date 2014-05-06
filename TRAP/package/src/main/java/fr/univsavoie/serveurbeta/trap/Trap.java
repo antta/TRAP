@@ -164,7 +164,7 @@ public class Trap {
      * @return
      */
     public boolean localRepositoryExists(String alias){
-        return this.zypp.localRepositoryExists(alias);
+        return this.zypp.localRepositoryExists(this.sysRoot, alias);
     }
 
     /**
@@ -173,6 +173,6 @@ public class Trap {
      * @return
      */
     public boolean hasRepositoryFor(String url){
-        return this.zypp.hasRepositoryFor(url);
+        return this.zypp.hasRepositoryFor(this.sysRoot, url);
     }
 }
