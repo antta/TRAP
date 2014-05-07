@@ -4,7 +4,7 @@
 
     <groupId>fr.univsavoie.serveurbeta.trap</groupId>
     <artifactId>trap-java</artifactId>
-    <version>${trap.version}</version>
+    <version>1.2-SNAPSHOT</version>
 
     <parent>
         <groupId>fr.univsavoie.serveurbeta.trap</groupId>

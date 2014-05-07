@@ -4,7 +4,7 @@
 
 	<groupId>fr.univsavoie.serveurbeta.trap</groupId>
 	<artifactId>trap-package</artifactId>
-	<version>${trap.version}</version>
+	<version>1.2-SNAPSHOT</version>
 
     <parent>
         <groupId>fr.univsavoie.serveurbeta.trap</groupId>
@@ -75,12 +75,14 @@
 		<dependency>
 			<groupId>fr.univsavoie.serveurbeta.trap</groupId>
 			<artifactId>trap-native</artifactId>
-			<version>1.2-SNAPSHOT</version>
+			<version>1.1-SNAPSHOT</version>
 			<type>so</type>
 		</dependency>
 
-		<dependency> <groupId>fr.univsavoie.serveurbeta.trap</groupId> <artifactId>trap-java</artifactId>
-			<version>1.2-SNAPSHOT</version>
+		<dependency>
+            <groupId>fr.univsavoie.serveurbeta.trap</groupId>
+            <artifactId>trap-java</artifactId>
+			<version>1.1-SNAPSHOT</version>
         </dependency>
 			
 		<dependency>
