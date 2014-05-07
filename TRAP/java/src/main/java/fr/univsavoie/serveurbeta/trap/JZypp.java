@@ -72,5 +72,15 @@ public class JZypp extends PackageManager{
      * @param pathName
      */
     native void setPathName(String pathName);
+
+    @Override
+    boolean localRepositoryExists(String sysRoot, String alias) {
+        return false;
+    }
+
+    @Override
+    boolean hasRepositoryFor(String sysRoot, String url) {
+        return false;
+    }
 }
 

@@ -48,7 +48,6 @@ public class PackageManagerImplementation extends PackageManager{
         packageManager.refreshRepo(home + "/testTRAP/", "offiSuse");
         System.out.println("Recherche de tout les packets : "+packageManager.getPackagesFromRepo(home+"/testTRAP/","offiSuse"));
         System.out.println("Recherche de "+unPaquet+" : "+packageManager.getPackagesFromName(home+"/testTRAP/", unPaquet, "offiSuse"));
-
     }
 
     private void retrieveMetaData(String url){
@@ -104,7 +103,6 @@ public class PackageManagerImplementation extends PackageManager{
 
     @Override
     boolean isAValidRepository(String url) {
-        //return new JZypp().isAValidRepository(url);
 
         try {
             HttpURLConnection httpUrlC =  ( HttpURLConnection ) new URL(url+"/repodata/repomd.xml").openConnection();
@@ -119,8 +117,8 @@ public class PackageManagerImplementation extends PackageManager{
     @Override
     String getPackage(String sysRoot, String packageName) {
         try{
-            throw new UnimplemenedMethodeException();
-        }catch(UnimplemenedMethodeException e){
+            throw new UnimplementedMethodException();
+        }catch(UnimplementedMethodException e){
             e.printStackTrace();
         }
         return null;
@@ -285,5 +283,39 @@ public class PackageManagerImplementation extends PackageManager{
         File metadataDirectory = new File(root.getAbsolutePath()+"/var/cache/zypp/raw/");
         repod.mkdirs();
         metadataDirectory.mkdir();
+    }
+
+    @Override
+    boolean localRepositoryExists(String sysRoot, String alias) {
+        return new File(new File(sysRoot).getAbsolutePath()+"/etc/zypp/repo.d/"+alias+".repo").exists();
+    }
+
+    @Override
+    boolean hasRepositoryFor(String sysRoot, String url) {
+        File root = new File(sysRoot);
+        File repod = new File(root.getAbsolutePath()+"/etc/zypp/repo.d/");
+        for(File repoFile: repod.listFiles()){
+
+            try {
+                BufferedReader reader = new BufferedReader(new FileReader(repoFile));
+
+                String line = reader.readLine();
+
+                while(line!=null){
+                    if(line.startsWith("baseurl")){
+                        if(url.equals(line.substring("baseurl=".length()))){
+                            return true;
+                        }
+                    }
+                    line = reader.readLine();
+                }
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
     }
 }
