@@ -46,8 +46,8 @@ public class PackageManagerImplementation extends PackageManager{
         System.out.println("[TEST]Is a valid repository ? "+packageManager.isAValidRepository(repoOfficielDeTousLesInternets));
         packageManager.addRepository(home + "/testTRAP/", repoOfficielDeTousLesInternets, "offiSuse");
         packageManager.refreshRepo(home + "/testTRAP/", "offiSuse");
-
-        System.out.println("Recherche de "+unPaquet+" : "+packageManager.getPackagesFromName(home+"/testTrap/", unPaquet, "offiSuse"));
+        System.out.println("Recherche de tout les packets : "+packageManager.getPackagesFromRepo(home+"/testTRAP/","offiSuse"));
+        System.out.println("Recherche de "+unPaquet+" : "+packageManager.getPackagesFromName(home+"/testTRAP/", unPaquet, "offiSuse"));
 
     }
 
@@ -129,7 +129,7 @@ public class PackageManagerImplementation extends PackageManager{
     @Override
     void addRepository(String sysRoot, String url, String alias) {
 
-        File repoFile = new File(sysRoot+"/etc/zypp/repo.d/"+"/"+alias+".repo");
+        File repoFile = new File(new File(sysRoot).getAbsolutePath()+"/etc/zypp/repo.d/"+alias+".repo");
 
         try {
             FileWriter writer = new FileWriter(repoFile);
@@ -157,18 +157,20 @@ public class PackageManagerImplementation extends PackageManager{
 
         for(String p : allPackages.split(",")){
             if(p.contains(packageName)){
-                correspondingPackage+="p";
+                correspondingPackage+=p+",";
             }
         }
+        correspondingPackage = correspondingPackage.substring(0,correspondingPackage.length() -1);
         return correspondingPackage;
     }
 
     @Override
     String getPackagesFromRepo(String sysRoot, String repoName) {
-        File repoFile = new File(sysRoot+"/var/cache/zypp/raw/"+"/"+repoName);
+        String pathname = new File(sysRoot).getAbsolutePath()+"/var/cache/zypp/raw/"+repoName+"/packages.txt";
+        File repoFile = new File(pathname);
 
         if(!repoFile.exists()){
-            System.err.println("[ERROR]The specified repo file doesn't exists");
+            System.err.println("[ERROR]The specified repo file doesn't exists : "+pathname);
             return "";
         }
 
@@ -179,22 +181,23 @@ public class PackageManagerImplementation extends PackageManager{
             return reader.readLine();
 
         } catch (FileNotFoundException e) {
-            System.err.println("[ERROR]The specified repo file doesn't exists");
+            System.err.println("[ERROR]The specified repo file doesn't exists : "+pathname);
             return "";
         } catch (IOException e) {
-            System.err.println("[ERROR]Cannot open the specified file");
+            System.err.println("[ERROR]Cannot open the specified file : "+pathname);
             return "";
         }
     }
 
     @Override
     void refreshRepo(String sysRoot, String repoName) {
-        File repoFile = new File(sysRoot+"/etc/zypp/repo.d/"+"/"+repoName+".repo");
+        String pathname = new File(sysRoot).getAbsolutePath() + "/etc/zypp/repo.d/" + "/" + repoName + ".repo";
+        File repoFile = new File(pathname);
         String url = "";
         String repoRevision = "";
 
         if(!repoFile.exists()){
-            System.err.println("[ERROR]The specified repo file doesn't exists");
+            System.err.println("[ERROR]The specified repo file doesn't exists : "+ pathname);
             return;
         }
 
@@ -217,11 +220,11 @@ public class PackageManagerImplementation extends PackageManager{
             e.printStackTrace();
         }
 
-        File metadataFile = new File(sysRoot+"/var/cache/zypp/raw/"+repoName+"/packages.txt");
+        File metadataFile = new File(new File(sysRoot).getAbsolutePath()+"/var/cache/zypp/raw/"+repoName+"/packages.txt");
 
         if(!metadataFile.exists()){
             try {
-                new File(sysRoot+"/var/cache/zypp/raw/"+repoName).mkdirs();
+                new File(new File(sysRoot).getAbsolutePath()+"/var/cache/zypp/raw/"+repoName).mkdirs();
                 metadataFile.createNewFile();
                 repoRevision = "undefined";
             } catch (IOException e) {
@@ -262,9 +265,11 @@ public class PackageManagerImplementation extends PackageManager{
         try {
             FileWriter writer = new FileWriter(metadaFile);
             writer.write(revision+"\n");
-            for (Element e : packages)
+            for (int i = 0; i < packages.size(); i ++)
             {
-                writer.write(e.getValue()+",");
+                writer.write(packages.get(i).getValue());
+                if(i < packages.size()-1)
+                    writer.write(",");
             }
             writer.write("\n");
             writer.close();

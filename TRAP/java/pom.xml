@@ -2,14 +2,14 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>fr.univsavoie.serveurbeta.trap</groupId>
-	<artifactId>trap-java</artifactId>
-	<version>1.1-SNAPSHOT</version>
+    <groupId>fr.univsavoie.serveurbeta.trap</groupId>
+    <artifactId>trap-java</artifactId>
+    <version>${trap.version}</version>
 
     <parent>
         <groupId>fr.univsavoie.serveurbeta.trap</groupId>
         <artifactId>trap</artifactId>
-        <version>1.1-SNAPSHOT</version>
+        <version>1.2-SNAPSHOT</version>
     </parent>
 
     <dependencies>
