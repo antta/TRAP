@@ -46,7 +46,7 @@ public class Trap {
 			e.printStackTrace();
 		}
 
-        this.sysRoot = sysRoot;
+        this.sysRoot = new File(sysRoot).getAbsolutePath();
         this.initSystem();
 	}
 
@@ -77,7 +77,7 @@ public class Trap {
             this.zypp = new PackageManagerImplementation();
         }
 
-        this.sysRoot = sysRoot;
+        this.sysRoot = new File(sysRoot).getAbsolutePath();
         this.initSystem();
     }
 

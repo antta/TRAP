@@ -127,7 +127,7 @@ public class PackageManagerImplementation extends PackageManager{
     @Override
     void addRepository(String sysRoot, String url, String alias) {
 
-        File repoFile = new File(new File(sysRoot).getAbsolutePath()+"/etc/zypp/repo.d/"+alias+".repo");
+        File repoFile = new File(sysRoot+"/etc/zypp/repo.d/"+alias+".repo");
 
         try {
             FileWriter writer = new FileWriter(repoFile);
@@ -164,7 +164,7 @@ public class PackageManagerImplementation extends PackageManager{
 
     @Override
     String getPackagesFromRepo(String sysRoot, String repoName) {
-        String pathname = new File(sysRoot).getAbsolutePath()+"/var/cache/zypp/raw/"+repoName+"/packages.txt";
+        String pathname = sysRoot+"/var/cache/zypp/raw/"+repoName+"/packages.txt";
         File repoFile = new File(pathname);
 
         if(!repoFile.exists()){
@@ -189,7 +189,7 @@ public class PackageManagerImplementation extends PackageManager{
 
     @Override
     void refreshRepo(String sysRoot, String repoName) {
-        String pathname = new File(sysRoot).getAbsolutePath() + "/etc/zypp/repo.d/" + "/" + repoName + ".repo";
+        String pathname = sysRoot + "/etc/zypp/repo.d/" + "/" + repoName + ".repo";
         File repoFile = new File(pathname);
         String url = "";
         String repoRevision = "";
@@ -218,11 +218,11 @@ public class PackageManagerImplementation extends PackageManager{
             e.printStackTrace();
         }
 
-        File metadataFile = new File(new File(sysRoot).getAbsolutePath()+"/var/cache/zypp/raw/"+repoName+"/packages.txt");
+        File metadataFile = new File(sysRoot+"/var/cache/zypp/raw/"+repoName+"/packages.txt");
 
         if(!metadataFile.exists()){
             try {
-                new File(new File(sysRoot).getAbsolutePath()+"/var/cache/zypp/raw/"+repoName).mkdirs();
+                new File(sysRoot+"/var/cache/zypp/raw/"+repoName).mkdirs();
                 metadataFile.createNewFile();
                 repoRevision = "undefined";
             } catch (IOException e) {
@@ -279,7 +279,7 @@ public class PackageManagerImplementation extends PackageManager{
     @Override
     void setPathName(String pathName) {
         File root = new File(pathName);
-        File repod = new File(root.getAbsolutePath()+"/etc/zypp/repo.d/");
+        File repod = new File(root+"/etc/zypp/repo.d/");
         File metadataDirectory = new File(root.getAbsolutePath()+"/var/cache/zypp/raw/");
         repod.mkdirs();
         metadataDirectory.mkdir();
@@ -287,7 +287,7 @@ public class PackageManagerImplementation extends PackageManager{
 
     @Override
     boolean localRepositoryExists(String sysRoot, String alias) {
-        return new File(new File(sysRoot).getAbsolutePath()+"/etc/zypp/repo.d/"+alias+".repo").exists();
+        return new File(sysRoot+"/etc/zypp/repo.d/"+alias+".repo").exists();
     }
 
     @Override
