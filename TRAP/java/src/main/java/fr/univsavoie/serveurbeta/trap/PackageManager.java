@@ -1,5 +1,9 @@
 package fr.univsavoie.serveurbeta.trap;
 
+import org.jdom2.JDOMException;
+
+import java.io.IOException;
+
 /**
  * Created by patrick-edouard on 4/23/14.
  */
@@ -60,7 +64,7 @@ public abstract class PackageManager {
      *
      * @param repoName
      */
-    abstract void refreshRepo(String sysRoot, String repoName);
+    abstract void refreshRepo(String sysRoot, String repoName) throws IOException, JDOMException;
 
     /**
      *
