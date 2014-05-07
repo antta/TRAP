@@ -132,7 +132,7 @@ public class PackageManagerImplementation extends PackageManager{
         try {
             FileWriter writer = new FileWriter(repoFile);
 
-            writer.write("["+alias+"]\nname="+alias+"\nenabled=1\nautorefresh=1\nbaseurl="+url+"\ntype=rpm-md");
+            writer.write("[" + alias + "]\nname=" + alias + "\nenabled=1\nautorefresh=1\nbaseurl=" + url + "\ntype=rpm-md");
 
             writer.close();
 
@@ -222,14 +222,20 @@ public class PackageManagerImplementation extends PackageManager{
 
         if(!metadataFile.exists()){
             try {
-                new File(sysRoot+"/var/cache/zypp/raw/"+repoName).mkdirs();
-                metadataFile.createNewFile();
+                File metadataDirectory = new File(sysRoot+"/var/cache/zypp/raw/"+repoName);
+                if(!metadataDirectory.mkdir()){
+                    System.err.println("[ERROR]Couldn't save cache at "+metadataDirectory);
+                }
+
+                if(!metadataFile.createNewFile()){
+                    System.err.println("[ERROR]Couldn't save cache at "+metadataFile);
+                }
                 repoRevision = "undefined";
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }else {
-            BufferedReader reader = null;
+            BufferedReader reader;
             try {
                 reader = new BufferedReader(new FileReader(metadataFile));
 
@@ -238,8 +244,7 @@ public class PackageManagerImplementation extends PackageManager{
                 if(repoRevision==null){
                     repoRevision="undefined";
                 }
-
-                System.out.println("");
+                reader.close();
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -262,7 +267,7 @@ public class PackageManagerImplementation extends PackageManager{
     private void storeRefreshedData(File metadaFile){
         try {
             FileWriter writer = new FileWriter(metadaFile);
-            writer.write(revision+"\n");
+            writer.write(revision + "\n");
             for (int i = 0; i < packages.size(); i ++)
             {
                 writer.write(packages.get(i).getValue());
@@ -281,8 +286,12 @@ public class PackageManagerImplementation extends PackageManager{
         File root = new File(pathName);
         File repod = new File(root+"/etc/zypp/repo.d/");
         File metadataDirectory = new File(root.getAbsolutePath()+"/var/cache/zypp/raw/");
-        repod.mkdirs();
-        metadataDirectory.mkdir();
+        if(!repod.mkdirs()){
+            System.err.println("[ERROR]Couldn't save repod at "+repod);
+        }
+        if(!metadataDirectory.mkdir()){
+            System.err.println("[ERROR]Couldn't save cache at "+metadataDirectory);
+        }
     }
 
     @Override
@@ -294,7 +303,11 @@ public class PackageManagerImplementation extends PackageManager{
     boolean hasRepositoryFor(String sysRoot, String url) {
         File root = new File(sysRoot);
         File repod = new File(root.getAbsolutePath()+"/etc/zypp/repo.d/");
-        for(File repoFile: repod.listFiles()){
+        File[] repoFiles = repod.listFiles();
+        if(repoFiles==null){
+            return false;
+        }
+        for(File repoFile: repoFiles){
 
             try {
                 BufferedReader reader = new BufferedReader(new FileReader(repoFile));
