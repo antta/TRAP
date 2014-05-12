@@ -7,6 +7,7 @@ import org.jdom2.input.SAXBuilder;
 
 import java.io.*;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.zip.GZIPInputStream;
@@ -30,7 +31,7 @@ public class PackageManagerImplementation extends PackageManager{
         packages=new ArrayList<Element>();
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) throws IOException, JDOMException {
 
         PackageManager packageManager = new PackageManagerImplementation();
 
@@ -54,12 +55,12 @@ public class PackageManagerImplementation extends PackageManager{
         System.out.println("Recherche de "+unPaquet+" : "+packageManager.getPackagesFromName(home+"/testTRAP/", unPaquet, "offiSuse"));
     }
 
-    private void retrieveMetaData(String url){
+    private void retrieveMetaData(String url) throws IOException, JDOMException {
 
         SAXBuilder sxb = new SAXBuilder();
         String urlRepomd = url+"repodata/repomd.xml";
 
-        try {
+        //try {
             Element rootRepomd = sxb.build(new URL(urlRepomd).openStream()).getRootElement();
             ns = rootRepomd.getNamespace();
 
@@ -78,11 +79,11 @@ public class PackageManagerImplementation extends PackageManager{
                 }
             }
 
-        } catch (IOException e) {
+        /*} catch (IOException e) {
             e.printStackTrace();
         } catch (JDOMException e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
     private void getAllPackage() {
@@ -192,7 +193,7 @@ public class PackageManagerImplementation extends PackageManager{
     }
 
     @Override
-    void refreshRepo(String sysRoot, String repoName) {
+    void refreshRepo(String sysRoot, String repoName) throws IOException, JDOMException {
         String pathname = sysRoot + "/etc/zypp/repo.d/" + "/" + repoName + ".repo";
         File repoFile = new File(pathname);
         String url = "";
