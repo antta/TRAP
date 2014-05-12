@@ -18,25 +18,37 @@ class Trap
 {
 public:
 
+    //singleton class
 	static Trap &getInstance()
 	{
 		static Trap s_instance;
 		return s_instance;
 	}
 
+    //set the path where etc/var/zypp/repo.d and other folder will be created
 	void setPathName(std::string pathName = "/");
 	std::string getPathName();
 
+    //search all package from a repository or all repositories
 	std::string getAllPackages(std::string repoAlias = "");
-	std::string getPackagesFromName(std::string name = "", std::string repoAlias = "");//Act very strange
+	//search a package from name, Act very strange, seems to not work anymore
+	std::string getPackagesFromName(std::string name = "", std::string repoAlias = "");
+	//get the last returned string (instead of redoing a search)
 	std::string lastQueryResult();
-	bool isRepositoryExists(std::string repoAlias); 
+
+	//find if the repo exists locally
+	bool isRepositoryExists(std::string repoAlias);
+	// add a repository
 	bool addRepo(std::string repoAlias, std::string repoURL, std::string gpgCheckURL = "");
+	//check if the URL is a repository
 	bool checkRepo(std::string repoURL);
-	bool refreshRepo(std::string repoAlias);//Does not work at all
-	
+	//refresh the given repository
+	bool refreshRepo(std::string repoAlias);
+
+	//delete all repositories from the current path name
 	void clean();
-	
+
+	//used for the search to create a string before changing the result string (not sure if it is useful)
 	void setBuildResult(std::string buildString = "");
 	void addBuildResult(std::string addString);
 
@@ -48,7 +60,7 @@ private:
 	
 	void initRepoManager();
 	
-	std::string m_buildString;//Used to overwrite the result string only when the querry is finished.
+	std::string m_buildString;//Used to overwrite the result string only when the query is finished.
 	std::string m_resultString;
 
 	Trap();

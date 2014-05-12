@@ -15,7 +15,7 @@ import java.util.ArrayList;
  */
 public class Trap {
 	
-	private static final String LIB_NAME = "trap-native-1.1-SNAPSHOT.so";
+	private static final String LIB_NAME = "trap-native-1.2-SNAPSHOT.so";
 	
 	private PackageManager zypp;
 
@@ -27,7 +27,7 @@ public class Trap {
     /**
      * New instance for Trap.
      * Due to cpp issues, it is highly recommended to use only one instance of Trap in your whole program.
-     * @param sysRoot refer to your snapshot system sample : ~/myVM/snapshot-1-0-2/root witch contain a etc/zypp/repos.d repository
+     * @param sysRoot refer to your snapshot system. example : ~/myVM/snapshot-1-0-2/root witch contain a etc/zypp/repos.d repository
      */
 	public Trap(String sysRoot) {
 		//this.zypp = new JZypp();
@@ -52,9 +52,9 @@ public class Trap {
 
     /**
      * New instance for Trap.
-     * Due to cpp issues, it is highly recommended to use only one instance of Trap in your whole program.
+     * Due to cpp issues, it is highly recommended to use only one instance of Trap in your whole program or set native to false
      * @param sysRoot refer to your snapshot system sample : ~/myVM/snapshot-1-0-2/root witch contain a etc/zypp/repos.d repository
-     * @param nativeMode switch between JZypp (witch call native cpp files) and our own java way (witch download the xml metada for the repos)
+     * @param nativeMode switch between JZypp (witch call native cpp files) and our own java way (witch act like libzypp but does not have functionality)
      */
     public Trap(String sysRoot, boolean nativeMode) {
         if(nativeMode){
@@ -81,17 +81,16 @@ public class Trap {
         this.initSystem();
     }
 
-    /**
-     *
-     */
     private void initSystem(){
         this.zypp.setPathName(this.sysRoot);
     }
 
     /**
      *
-     * @param packageName
-     * @return
+     * Search packages in all repositories and return a package list
+     *
+     * @param packageName Package to search
+     * @return List of the packages.
      */
 	public ArrayList<Package> searchPackage(String packageName) {
 		ArrayList<Package> packages = new ArrayList<Package>();
@@ -106,14 +105,18 @@ public class Trap {
 
     /**
      *
-     * @param repoURL
-     * @return
+     * Check if the given URL is a valid repository
+     *
+     * @param repoURL URL to check
+     * @return true if the URL is a repository
      */
     public boolean isAValidRepository(String repoURL) {
         return zypp.isAValidRepository(repoURL);
     }
 
     /**
+     *
+     *
      *
      * @param repoAlias
      */
@@ -169,10 +172,11 @@ public class Trap {
 
     /**
      * Check if a local repository (in sysRoot/etc/zypp/repo.d/*) exists with the given url
+     * @param alias
      * @param url
      * @return
      */
-    public boolean hasRepositoryFor(String url){
-        return this.zypp.hasRepositoryFor(this.sysRoot, url);
+    public boolean localRepositoryExists(String alias, String url){
+        return this.zypp.localRepositoryExists(this.sysRoot, url);
     }
 }

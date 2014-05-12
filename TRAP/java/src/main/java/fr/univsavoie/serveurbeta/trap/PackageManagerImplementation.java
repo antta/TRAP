@@ -12,6 +12,10 @@ import java.util.ArrayList;
 import java.util.zip.GZIPInputStream;
 
 /**
+ * Implement method of the pakageManager directly in Java instead of using native method.
+ *
+ * Use the same folder structure as libzypp but some repository might not be detected the same way and metadata stored are not the same.
+ *
  * Created by patrick-edouard on 4/23/14.
  */
 public class PackageManagerImplementation extends PackageManager{
@@ -300,15 +304,10 @@ public class PackageManagerImplementation extends PackageManager{
     }
 
     @Override
-    boolean hasRepositoryFor(String sysRoot, String url) {
-        File root = new File(sysRoot);
-        File repod = new File(root.getAbsolutePath()+"/etc/zypp/repo.d/");
-        File[] repoFiles = repod.listFiles();
-        if(repoFiles==null){
-            return false;
-        }
-        for(File repoFile: repoFiles){
-
+    boolean localRepositoryExists(String sysRoot, String alias ,String url) {
+        File repoFile = new File(sysRoot+"/etc/zypp/repo.d/"+alias+".repo");
+        if (repoFile.exists())
+        {
             try {
                 BufferedReader reader = new BufferedReader(new FileReader(repoFile));
 
@@ -316,10 +315,12 @@ public class PackageManagerImplementation extends PackageManager{
 
                 while(line!=null){
                     if(line.startsWith("baseurl")){
-                        if(url.equals(line.substring("baseurl=".length()))){
-                            return true;
-                        }
+                       if (url.equals(line.substring("baseurl=".length())))
+                        return true;
+                       else
+                        return false;
                     }
+
                     line = reader.readLine();
                 }
 
