@@ -54,12 +54,12 @@ public class PackageManagerImplementation extends PackageManager{
         System.out.println("Recherche de "+unPaquet+" : "+packageManager.getPackagesFromName(home+"/testTRAP/", unPaquet, "offiSuse"));
     }
 
-    private void retrieveMetaData(String url) throws IOException, JDOMException {
+    private void retrieveMetaData(String url){// throws IOException, JDOMException {
 
         SAXBuilder sxb = new SAXBuilder();
         String urlRepomd = url+"repodata/repomd.xml";
 
-        //try {
+        try {
             Element rootRepomd = sxb.build(new URL(urlRepomd).openStream()).getRootElement();
             ns = rootRepomd.getNamespace();
 
@@ -78,11 +78,11 @@ public class PackageManagerImplementation extends PackageManager{
                 }
             }
 
-        /*} catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         } catch (JDOMException e) {
             e.printStackTrace();
-        }*/
+        }
     }
 
     private void getAllPackage() {
