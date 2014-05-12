@@ -15,72 +15,52 @@ public class JZypp extends PackageManager{
      * @param url to test
      * @return true if the repo is valid false otherwise
      */
+    @Override
     native boolean isAValidRepository(String url);
 
-    /**
-     *
-     * @param packageName
-     * @return
-     */
+    @Override
     native String getPackage(String sysRoot, String packageName);
 
-    /**
-     * Add the given repository to the current repo.d
-     *
-     * Need root privilège if the sysroot is your distribution's root
-     *
-     * @param url of a repository
-     * @param alias name for the repo
-     */
+    @Override
     native void addRepository(String sysRoot, String url, String alias);
 
-    /**
-     * Add the given repository to the current repo.d
-     *
-     * Need root privilège if the sysroot is your distribution's root
-     *
-     * @param url of a repository
-     * @param alias name for the repo
-     */
+    @Override
     native void addRepository(String sysRoot, String url, String urlGPG, String alias);
 
-    /**
-     *
-     * @param packageName
-     * @param repoName
-     * @return
-     */
+    @Override
     native String getPackagesFromName(String sysRoot, String packageName, String repoName);
 
-    /**
-     *
-     * @param repoName
-     * @param
-     * @param
-     * @return
-     */
+    @Override
     native String getPackagesFromRepo(String sysRoot, String repoName);
 
-    /**
-     * Refresh the package list for the given repository.
-     * Store the package list in cache.
-     * @param repoName
-     */
+    @Override
     native void refreshRepo(String sysRoot, String repoName);
 
-    /**
-     *
-     * @param pathName
-     */
+    @Override
     native void setPathName(String pathName);
 
+    /**
+     * Not implemented in native yet
+     *
+     * @param sysRoot Path to the "virtual" file system root : where will be put the information of the repository without changing the system repositories
+     * @param alias Name of the repository
+     * @return True if the local repository exists false
+     */
     @Override
     boolean localRepositoryExists(String sysRoot, String alias) {
         return false;
     }
 
+    /**
+     * Not implemented in native yet
+     *
+     * @param sysRoot Path to the "virtual" file system root : where will be put the information of the repository without changing the system repositories
+     * @param alias Name of the repository
+     * @param url Url of the repository
+     * @return True if the repository exists and the two parameters are the same in the file
+     */
     @Override
-    boolean hasRepositoryFor(String sysRoot, String url) {
+    boolean localRepositoryExists(String sysRoot, String alias, String url) {
         return false;
     }
 }
