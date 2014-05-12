@@ -62,7 +62,8 @@ public class JZypp extends PackageManager{
     native String getPackagesFromRepo(String sysRoot, String repoName);
 
     /**
-     *
+     * Refresh the package list for the given repository.
+     * Store the package list in cache.
      * @param repoName
      */
     native void refreshRepo(String sysRoot, String repoName);

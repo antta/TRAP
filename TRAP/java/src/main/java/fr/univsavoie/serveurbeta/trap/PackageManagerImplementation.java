@@ -7,7 +7,6 @@ import org.jdom2.input.SAXBuilder;
 
 import java.io.*;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.zip.GZIPInputStream;
