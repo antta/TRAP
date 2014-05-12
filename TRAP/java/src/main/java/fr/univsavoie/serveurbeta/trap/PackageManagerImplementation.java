@@ -193,7 +193,7 @@ public class PackageManagerImplementation extends PackageManager{
 
     @Override
     void refreshRepo(String sysRoot, String repoName){// throws IOException, JDOMException {
-        String pathname = sysRoot + "/etc/zypp/repo.d/" + "/" + repoName + ".repo";
+        String pathname = sysRoot + "etc/zypp/repo.d/" + "/" + repoName + ".repo";
         File repoFile = new File(pathname);
         String url = "";
         String repoRevision = "";
@@ -222,11 +222,11 @@ public class PackageManagerImplementation extends PackageManager{
             e.printStackTrace();
         }
 
-        File metadataFile = new File(sysRoot+"/var/cache/zypp/raw/"+repoName+"/packages.txt");
+        File metadataFile = new File(sysRoot+"var/cache/zypp/raw/"+repoName+"/packages.txt");
 
         if(!metadataFile.exists()){
             try {
-                File metadataDirectory = new File(sysRoot+"/var/cache/zypp/raw/"+repoName);
+                File metadataDirectory = new File(sysRoot+"var/cache/zypp/raw/"+repoName);
                 if(!metadataDirectory.mkdir()){
                     System.err.println("[ERROR]Couldn't save cache at "+metadataDirectory);
                 }
