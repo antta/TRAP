@@ -1,6 +1,7 @@
 package fr.univsavoie.serveurbeta.trap;
 
 import org.apache.commons.io.IOUtils;
+import org.jdom2.JDOMException;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -120,7 +121,7 @@ public class Trap {
      *
      * @param repoAlias
      */
-    public void refreshRepo(String repoAlias){
+    public void refreshRepo(String repoAlias) throws IOException, JDOMException {
         this.zypp.refreshRepo(sysRoot, repoAlias);
     }
 
