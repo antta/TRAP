@@ -121,7 +121,7 @@ public class Trap {
      *
      * @param repoAlias
      */
-    public void refreshRepo(String repoAlias) throws IOException, JDOMException {
+    public void refreshRepo(String repoAlias){//} throws IOException, JDOMException {
         this.zypp.refreshRepo(sysRoot, repoAlias);
     }
 

@@ -192,7 +192,7 @@ public class PackageManagerImplementation extends PackageManager{
     }
 
     @Override
-    void refreshRepo(String sysRoot, String repoName) throws IOException, JDOMException {
+    void refreshRepo(String sysRoot, String repoName){// throws IOException, JDOMException {
         String pathname = sysRoot + "/etc/zypp/repo.d/" + "/" + repoName + ".repo";
         File repoFile = new File(pathname);
         String url = "";

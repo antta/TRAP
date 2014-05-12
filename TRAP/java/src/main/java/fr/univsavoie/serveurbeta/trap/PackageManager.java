@@ -74,7 +74,7 @@ public abstract class PackageManager {
      * @param sysRoot Path to the "virtual" file system root : where will be put the information of the repository without changing the system repositories
      * @param repoName Name of the repository you want to get package you want to refresh
      */
-    abstract void refreshRepo(String sysRoot, String repoName) throws IOException, JDOMException;
+    abstract void refreshRepo(String sysRoot, String repoName);// throws IOException, JDOMException;
 
     /**
      *  Depending on the implementation may be used to create all folders needed for the other functions
