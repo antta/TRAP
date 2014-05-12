@@ -296,11 +296,11 @@ public class PackageManagerImplementation extends PackageManager{
         }
 
         File metadataDirectory = new File(root+"/var/cache/zypp/raw/");
-        if(!metadataDirectory.exists()){
+        //if(!metadataDirectory.exists()){
             if(!metadataDirectory.mkdirs()){
                 System.err.println("[ERROR]Couldn't save cache at "+metadataDirectory);
             }
-        }
+        //}
 
     }
 
@@ -311,20 +311,18 @@ public class PackageManagerImplementation extends PackageManager{
 
     @Override
     boolean localRepositoryExists(String sysRoot, String alias ,String url) {
-        File repoFile = new File(sysRoot+"/etc/zypp/repo.d/"+alias+".repo");
-        if (repoFile.exists())
-        {
+        File repoFile;
+        repoFile = new File(sysRoot+"/etc/zypp/repo.d/"+alias+".repo");
+        if (repoFile.exists()) {
             try {
-                BufferedReader reader = new BufferedReader(new FileReader(repoFile));
+                BufferedReader reader;
+                reader = new BufferedReader(new FileReader(repoFile));
 
                 String line = reader.readLine();
 
-                while(line!=null){
-                    if(line.startsWith("baseurl")){
-                       if (url.equals(line.substring("baseurl=".length())))
-                        return true;
-                       else
-                        return false;
+                while (line != null) {
+                    if (line.startsWith("baseurl")) {
+                        return url.equals(line.substring("baseurl=".length()));
                     }
 
                     line = reader.readLine();
