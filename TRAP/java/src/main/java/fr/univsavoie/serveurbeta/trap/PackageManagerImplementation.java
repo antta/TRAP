@@ -289,13 +289,19 @@ public class PackageManagerImplementation extends PackageManager{
     void setPathName(String pathName) {
         File root = new File(pathName);
         File repod = new File(root+"/etc/zypp/repo.d/");
-        File metadataDirectory = new File(root.getAbsolutePath()+"/var/cache/zypp/raw/");
-        if(!repod.mkdirs()){
-            System.err.println("[ERROR]Couldn't save repod at "+repod);
+        if(!repod.exists()){
+            if(!repod.mkdirs()){
+                System.err.println("[ERROR]Couldn't save repod at "+repod);
+            }
         }
-        if(!metadataDirectory.mkdir()){
-            System.err.println("[ERROR]Couldn't save cache at "+metadataDirectory);
+
+        File metadataDirectory = new File(root+"/var/cache/zypp/raw/");
+        if(!metadataDirectory.exists()){
+            if(!metadataDirectory.mkdirs()){
+                System.err.println("[ERROR]Couldn't save cache at "+metadataDirectory);
+            }
         }
+
     }
 
     @Override
