@@ -7,7 +7,6 @@ import org.jdom2.input.SAXBuilder;
 
 import java.io.*;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.zip.GZIPInputStream;
@@ -55,12 +54,12 @@ public class PackageManagerImplementation extends PackageManager{
         System.out.println("Recherche de "+unPaquet+" : "+packageManager.getPackagesFromName(home+"/testTRAP/", unPaquet, "offiSuse"));
     }
 
-    private void retrieveMetaData(String url) throws IOException, JDOMException {
+    private void retrieveMetaData(String url){// throws IOException, JDOMException {
 
         SAXBuilder sxb = new SAXBuilder();
         String urlRepomd = url+"repodata/repomd.xml";
 
-        //try {
+        try {
             Element rootRepomd = sxb.build(new URL(urlRepomd).openStream()).getRootElement();
             ns = rootRepomd.getNamespace();
 
@@ -79,11 +78,11 @@ public class PackageManagerImplementation extends PackageManager{
                 }
             }
 
-        /*} catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         } catch (JDOMException e) {
             e.printStackTrace();
-        }*/
+        }
     }
 
     private void getAllPackage() {
@@ -193,8 +192,8 @@ public class PackageManagerImplementation extends PackageManager{
     }
 
     @Override
-    void refreshRepo(String sysRoot, String repoName) throws IOException, JDOMException {
-        String pathname = sysRoot + "/etc/zypp/repo.d/" + "/" + repoName + ".repo";
+    void refreshRepo(String sysRoot, String repoName){// throws IOException, JDOMException {
+        String pathname = sysRoot + "etc/zypp/repo.d/" + "/" + repoName + ".repo";
         File repoFile = new File(pathname);
         String url = "";
         String repoRevision = "";
@@ -223,11 +222,11 @@ public class PackageManagerImplementation extends PackageManager{
             e.printStackTrace();
         }
 
-        File metadataFile = new File(sysRoot+"/var/cache/zypp/raw/"+repoName+"/packages.txt");
+        File metadataFile = new File(sysRoot+"var/cache/zypp/raw/"+repoName+"/packages.txt");
 
         if(!metadataFile.exists()){
             try {
-                File metadataDirectory = new File(sysRoot+"/var/cache/zypp/raw/"+repoName);
+                File metadataDirectory = new File(sysRoot+"var/cache/zypp/raw/"+repoName);
                 if(!metadataDirectory.mkdir()){
                     System.err.println("[ERROR]Couldn't save cache at "+metadataDirectory);
                 }
@@ -290,13 +289,19 @@ public class PackageManagerImplementation extends PackageManager{
     void setPathName(String pathName) {
         File root = new File(pathName);
         File repod = new File(root+"/etc/zypp/repo.d/");
-        File metadataDirectory = new File(root.getAbsolutePath()+"/var/cache/zypp/raw/");
-        if(!repod.mkdirs()){
-            System.err.println("[ERROR]Couldn't save repod at "+repod);
+        if(!repod.exists()){
+            if(!repod.mkdirs()){
+                System.err.println("[ERROR]Couldn't save repod at "+repod);
+            }
         }
-        if(!metadataDirectory.mkdir()){
-            System.err.println("[ERROR]Couldn't save cache at "+metadataDirectory);
-        }
+
+        File metadataDirectory = new File(root+"/var/cache/zypp/raw/");
+        //if(!metadataDirectory.exists()){
+            if(!metadataDirectory.mkdirs()){
+                System.err.println("[ERROR]Couldn't save cache at "+metadataDirectory);
+            }
+        //}
+
     }
 
     @Override
@@ -306,20 +311,18 @@ public class PackageManagerImplementation extends PackageManager{
 
     @Override
     boolean localRepositoryExists(String sysRoot, String alias ,String url) {
-        File repoFile = new File(sysRoot+"/etc/zypp/repo.d/"+alias+".repo");
-        if (repoFile.exists())
-        {
+        File repoFile;
+        repoFile = new File(sysRoot+"/etc/zypp/repo.d/"+alias+".repo");
+        if (repoFile.exists()) {
             try {
-                BufferedReader reader = new BufferedReader(new FileReader(repoFile));
+                BufferedReader reader;
+                reader = new BufferedReader(new FileReader(repoFile));
 
                 String line = reader.readLine();
 
-                while(line!=null){
-                    if(line.startsWith("baseurl")){
-                       if (url.equals(line.substring("baseurl=".length())))
-                        return true;
-                       else
-                        return false;
+                while (line != null) {
+                    if (line.startsWith("baseurl")) {
+                        return url.equals(line.substring("baseurl=".length()));
                     }
 
                     line = reader.readLine();

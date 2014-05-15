@@ -110,7 +110,7 @@ public class Trap {
      *
      * @param repoAlias Name of the repository to refresh
      */
-    public void refreshRepo(String repoAlias) throws IOException, JDOMException {
+    public void refreshRepo(String repoAlias){//} throws IOException, JDOMException {
         this.zypp.refreshRepo(sysRoot, repoAlias);
     }
 
