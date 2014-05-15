@@ -1,7 +1,7 @@
 package fr.univsavoie.serveurbeta.trap;
 
 /**
- * Created by patrick-edouard on 4/23/14.
+ * Exception used for Unimplemented Methods
  */
 public class UnimplementedMethodException extends Exception {
 

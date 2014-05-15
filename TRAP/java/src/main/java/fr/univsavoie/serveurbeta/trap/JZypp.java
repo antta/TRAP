@@ -8,13 +8,14 @@ package fr.univsavoie.serveurbeta.trap;
 	bool checkRepo(std::string repoURL);
 	void refreshRepo(std::string repoAlias);
  */
+
+/**
+ * Native implementation of the PackageManager usig libzypp and C++.<br/>
+ * <br/>
+ * All methods are not implemented and some does not work at all, we have give up on the native part because it was making Jenkins Crash while using the library in the plugin.
+ */
 public class JZypp extends PackageManager{
 
-    /**
-     * Check if the given repo url is valid.
-     * @param url to test
-     * @return true if the repo is valid false otherwise
-     */
     @Override
     native boolean isAValidRepository(String url);
 

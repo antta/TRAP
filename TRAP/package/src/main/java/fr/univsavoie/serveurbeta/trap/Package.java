@@ -1,15 +1,14 @@
 package fr.univsavoie.serveurbeta.trap;
 
 /**
- * Class Package
- *
- * Is used as a storage class for packages containing :
+ * Class Package </br>
+ *</br>
+ * Is used as a storage class for packages containing :</br>
  * <ul>
  *     <li>The name</li>
- *     <li>The repository wich provide the package</li>
+ *     <li>The repository which provide the package</li>
  *     <li>A boolean if the package is installed</li>
  * </ul>
- * Created by patrick-edouard on 2/19/14.
  */
 public class Package {
     private String name;

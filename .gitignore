@@ -2,3 +2,4 @@
 ./TRAP/target
 *.classpath
 *.project
+*.iml

@@ -12,11 +12,9 @@ import java.util.ArrayList;
 import java.util.zip.GZIPInputStream;
 
 /**
- * Implement method of the pakageManager directly in Java instead of using native method.
- *
+ * Implement method of the pakageManager directly in Java instead of using native method. <br/>
+ *<br/>
  * Use the same folder structure as libzypp but some repository might not be detected the same way and metadata stored are not the same.
- *
- * Created by patrick-edouard on 4/23/14.
  */
 public class PackageManagerImplementation extends PackageManager{
 

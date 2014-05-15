@@ -1,31 +1,29 @@
 package fr.univsavoie.serveurbeta.trap;
 
-import org.jdom2.JDOMException;
+
 
 import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
 
 
 /**
- * TRAP Research Any Package is used to search on distant repository a list of the existing package and search in the list with a simple API
- * It use the same folders as Zypper the Suse package manager (and can use the same library than zypper).
- *
- * In   etc/zypper/repo.d/      Is stored a list of .repo files that store the repositories information
- * In   var/cache/zypp/raw/    Is stored the metadata of each repository, depending of the package manager used to trap, it can be .xml.gz files or just .txt files
- *
- *      By default, it use the root folder "/" but this should be changed to not interfere with the system package manager.
- *
- * Example of use of TRAP :
- *
- * Trap trap = new Trap("/home/user/virtualRoot");
+ * TRAP Research Any Package is used to search on distant repository a list of the existing package and search in the list with a simple API <br/>
+ * It use the same folders as Zypper the Suse package manager (and can use the same library than zypper).<br/>
+ *<br/>
+ * In   etc/zypper/repo.d/      Is stored a list of .repo files that store the repositories information<br/>
+ * In   var/cache/zypp/raw/    Is stored the metadata of each repository, depending of the package manager used to trap, it can be .xml.gz files or just .txt files<br/>
+ *<br/>
+ *      By default, it use the root folder "/" but this should be changed to not interfere with the system package manager.<br/>
+ *<br/>
+ * Example of use of TRAP :<br/>
+ *<br/>
+ * <pre>Trap trap = new Trap("/home/user/virtualRoot");
  * if (trap.isAValidRepository("http://url_to_my_repo/opensuse12_3/")) {
  *     trap.addRepository(myrepo,"http://url_to_my_repo/opensuse12_3/");
  *     trap.refresh(myrepo);
  *     system.out.println(trap.getPackagesIn(myrepo))
- * }
+ * }</pre>
  *
- * Because all information concerning packages and repositories are stored on the file system, if the path is a same during two different executions the repositories and packages will be saved.
+ * Because all information concerning packages and repositories are stored on the file system, if the path is a same during two different executions the repositories and packages will be saved.<br/>
  */
 public class Trap {
 	
@@ -63,7 +61,7 @@ public class Trap {
 	}
 
     /**
-     * New instance for Trap.
+     * New instance for Trap.<br/>
      * Due to cpp issues when using the native Pckagemanager, it is highly recommended to use only one instance of Trap in your whole program or set native to false
      * @param sysRoot refer to your snapshot system sample : ~/myVM/snapshot-1-0-2/root witch contain a etc/zypp/repos.d repository
      * @param packageManager Change the Packagemanager used (between native with libzypp or Java)
@@ -103,9 +101,9 @@ public class Trap {
     }
 
     /**
-     * Get the metadata of the repository.
-     * If no refresh is done at least once, no package can be searched.
-     *
+     * Get the metadata of the repository.<br/>
+     * If no refresh is done at least once, no package can be searched.<br/>
+     *<br/>
      * Note that refreshing a repository is an important thing to do before getting the package, it may take a long time but if there is no change on the distant repository, the operation take less than a second
      *
      * @param repoAlias Name of the repository to refresh
@@ -127,8 +125,8 @@ public class Trap {
 
     /**
      *
-     * Not totaly implemented in all of the package Managers
-     *
+     * Not totaly implemented in all of the package Managers<br/>
+     *<br/>
      * Add a repository on the file system in {this.sysroot}/etc/zypp/repo.d/{repoAlias}.repo
      *
      * @param repoAlias Name of the repository to add
