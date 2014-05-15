@@ -5,14 +5,18 @@ import org.jdom2.JDOMException;
 import java.io.IOException;
 
 /**
- * Created by patrick-edouard on 4/23/14.
+ * The PackageManager is a interface (but implemented as an abstract class because interfaces have some problems with native methods)
+ *
+ * It use the same functions as Trap but include additional parameter sysroot in most functions.
  */
 public abstract class PackageManager {
 
     /**
-     * Check if the given repo url is valid.
-     * @param url to test
-     * @return true if the repo is valid false otherwise
+     *
+     * Check if the given URL is a valid repository
+     *
+     * @param url URL to check
+     * @return true if the URL is a repository
      */
     abstract boolean isAValidRepository(String url);
 
