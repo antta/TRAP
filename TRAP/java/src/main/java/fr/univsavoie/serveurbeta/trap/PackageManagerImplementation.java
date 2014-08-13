@@ -28,30 +28,6 @@ public class PackageManagerImplementation extends PackageManager{
         packages=new ArrayList<Element>();
     }
 
-    public static void main(String[] args) throws IOException, JDOMException {
-
-        PackageManager packageManager = new PackageManagerImplementation();
-
-        String unPaquet = "kiwi";
-        String home = (System.getProperty("user.home"));
-
-        packageManager.setPathName(home+"/testTRAP/");
-
-        /*
-        String repoGomez = "http://download.opensuse.org/repositories/home:/henri_gomez:/devops-incubator/openSUSE_13.1/";
-        packageManager.addRepository(home+"/testTRAP/",repoGomez,"RepoGomez");
-        */
-
-        String repoOfficielDeTousLesInternets = "http://download.opensuse.org/distribution/13.1/repo/oss/suse/";
-        System.out.println("[TEST]Is a valid repository ? "+packageManager.isAValidRepository(repoOfficielDeTousLesInternets + "yolo"));
-
-        System.out.println("[TEST]Is a valid repository ? "+packageManager.isAValidRepository(repoOfficielDeTousLesInternets));
-        packageManager.addRepository(home + "/testTRAP/", repoOfficielDeTousLesInternets, "offiSuse");
-        packageManager.refreshRepo(home + "/testTRAP/", "offiSuse");
-        System.out.println("Recherche de tout les packets : "+packageManager.getPackagesFromRepo(home+"/testTRAP/","offiSuse"));
-        System.out.println("Recherche de "+unPaquet+" : "+packageManager.getPackagesFromName(home+"/testTRAP/", unPaquet, "offiSuse"));
-    }
-
     private void retrieveMetaData(String url){// throws IOException, JDOMException {
 
         SAXBuilder sxb = new SAXBuilder();
