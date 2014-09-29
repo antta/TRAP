@@ -94,11 +94,6 @@ public class PackageManagerImplementation extends PackageManager{
 
     @Override
     String getPackage(String sysRoot, String packageName) {
-        try{
-            throw new UnimplementedMethodException();
-        }catch(UnimplementedMethodException e){
-            e.printStackTrace();
-        }
         return null;
     }
 
